@@ -39,7 +39,7 @@ export default function LoginForm() {
         <input
           id="email"
           type="email"
-          placeholder="you@example.com"
+          placeholder="hello@example.com"
           className="h-10 w-full rounded-md border px-3 text-sm outline-none focus:border-[#6B4F4B]"
           {...register("email")}
         />

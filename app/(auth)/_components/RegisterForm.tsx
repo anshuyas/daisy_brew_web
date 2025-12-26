@@ -33,7 +33,7 @@ export default function RegisterForm() {
         <input
           id="name"
           type="text"
-          placeholder="Jane Doe"
+          placeholder="Keifer Watson"
           className="h-10 w-full rounded-md border px-3 text-sm outline-none focus:border-brown-700"
           {...register("name")}
         />
@@ -45,7 +45,7 @@ export default function RegisterForm() {
         <input
           id="email"
           type="email"
-          placeholder="you@example.com"
+          placeholder="keif@example.com"
           className="h-10 w-full rounded-md border px-3 text-sm outline-none focus:border-brown-700"
           {...register("email")}
         />
@@ -78,13 +78,13 @@ export default function RegisterForm() {
 
       <button
         type="submit"
-        disabled={isSubmitting || pending}
-        className="h-10 w-full rounded-md bg-brown-700 text-beige font-semibold hover:opacity-90 disabled:opacity-60"
+        disabled={isSubmitting}
+        className="h-10 w-full rounded-md bg-[#6B4F4B] text-[#FAF5EE] font-semibold hover:opacity-90 disabled:opacity-60"
       >
         {isSubmitting || pending ? "Creating Account..." : "Create Account"}
       </button>
-
-      <div className="text-sm text-center mt-2">
+    
+          <div className="text-sm text-center mt-2">
         Already have an account? <Link href="/login" className="font-semibold underline">Log in</Link>
       </div>
     </form>
