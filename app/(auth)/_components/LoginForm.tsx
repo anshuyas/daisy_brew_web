@@ -27,7 +27,7 @@ export default function LoginForm() {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Navigate to dashboard
-    router.push("/auth/dashboard");
+    router.push("/dashboard");
   };
 
   return (
