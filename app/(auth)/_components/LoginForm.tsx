@@ -31,7 +31,7 @@ export default function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(submit)} className="space-y-4 bg-[#FAF5EE] p-6 rounded-xl shadow-md w-full max-w-md">
+    <form onSubmit={handleSubmit(submit)} className="space-y-4 bg-[#c2b5a4] p-6 rounded-xl shadow-md w-full max-w-md">
 
       <div className="space-y-1">
         <label className="text-sm font-medium" htmlFor="email">Email</label>
@@ -57,10 +57,16 @@ export default function LoginForm() {
         {errors.password && <p className="text-xs text-red-600">{errors.password.message}</p>}
       </div>
 
+        <div className="text-right mt-1">
+          <Link href="/forgot-password" className="text-xs text-[#6B4F4B] hover:underline">
+            Forgot password?
+          </Link>
+        </div>
+
       <button
         type="submit"
         disabled={isSubmitting}
-        className="h-10 w-full rounded-md bg-[#6B4F4B] text-[#FAF5EE] font-semibold hover:opacity-90 disabled:opacity-60"
+        className="h-10 w-full rounded-md bg-[#3c2825] text-[#FAF5EE] font-semibold hover:opacity-90 disabled:opacity-60"
       >
         {isSubmitting ? "Logging in..." : "Log in"}
       </button>
