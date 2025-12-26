@@ -32,7 +32,7 @@ export default function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit(submit)} className="space-y-4 bg-beige p-6 rounded shadow-md w-full max-w-md">
-      <h2 className="text-2xl font-semibold text-brown-900 mb-4">Login to Daisy Brew</h2>
+      <h2 className="text-2xl font-semibold text-brown-900 mb-4">Login</h2>
 
       <div className="space-y-1">
         <label className="text-sm font-medium" htmlFor="email">Email</label>
