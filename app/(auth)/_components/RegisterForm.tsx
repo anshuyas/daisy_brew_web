@@ -25,8 +25,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(submit)} className="space-y-4 bg-beige p-6 rounded shadow-md w-full max-w-md">
-      <h2 className="text-2xl font-semibold text-brown-900 mb-4">Create Your Account</h2>
+    <form onSubmit={handleSubmit(submit)} className="space-y-4 bg-[#c2b5a4] p-6 rounded-xl shadow-md w-full max-w-md">
 
       <div className="space-y-1">
         <label htmlFor="name" className="text-sm font-medium">Full Name</label>
@@ -79,7 +78,7 @@ export default function RegisterForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="h-10 w-full rounded-md bg-[#6B4F4B] text-[#FAF5EE] font-semibold hover:opacity-90 disabled:opacity-60"
+        className="h-10 w-full rounded-md bg-[#3c2825] text-[#FAF5EE] font-semibold hover:opacity-90 disabled:opacity-60"
       >
         {isSubmitting || pending ? "Creating Account..." : "Create Account"}
       </button>

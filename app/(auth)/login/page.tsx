@@ -17,11 +17,11 @@ export default function LoginPage() {
         />
       </div>
 
-        <div className="w-full max-w-4xl min-h-[500px] bg-[#dfd5c8] rounded-2xl shadow-2xl grid grid-cols-1 md:grid-cols-2 overflow-hidden">
+        <div className="w-full max-w-4xl min-h-125 bg-[#dfd5c8] rounded-2xl shadow-2xl grid grid-cols-1 md:grid-cols-2 overflow-hidden">
 
         <div
           className="hidden md:block bg-cover bg-left"
-          style={{ backgroundImage: "url('/images/bg.jpg')" }}
+          style={{ backgroundImage: "url('/images/pls.jpg')" }}
         >
           <div className="h-full w-full bg-[#4B2E2B]/20"></div>
         </div>

@@ -23,10 +23,7 @@ export default function LoginForm() {
   const submit = async (values: LoginData) => {
     console.log("Login Data:", values);
 
-    // Simulate async login
     await new Promise(resolve => setTimeout(resolve, 1000));
-
-    // Navigate to dashboard
     router.push("/dashboard");
   };
 
