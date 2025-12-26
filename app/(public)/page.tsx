@@ -3,15 +3,15 @@ export default function HomePage() {
     <main
       className="relative min-h-screen bg-cover bg-center"
       style={{
-        backgroundImage: "url('/images/bg.jpg')",
+        backgroundImage: "url('/images/background.jpg')",
       }}
     >
       {/* Beige overlay */}
       <div className="absolute inset-0 bg-[#F5F0E6]/20"></div>
 
       {/* Content */}
-      <div className="relative flex min-h-screen items-center justify-center px-12">
-        <div className="max-w-md text-right ml-150">
+      <div className="relative flex min-h-screen items-center justify-center px-6">
+      <div className="bg-[#8A7356]/75 backdrop-blur-md p-10 rounded-2xl shadow-2xl max-w-md w-full text-center md:translate-x-70">
           <h1 className="text-4xl font-bold mb-4 text-brown-900">
             Welcome to Daisy Brew!
           </h1>
