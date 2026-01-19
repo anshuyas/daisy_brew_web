@@ -1,4 +1,5 @@
-import api from "./axios"
+import api from './axios';
+import { API } from './endpoint';
 
 interface RegisterData {
   email: string;
@@ -28,9 +29,9 @@ interface LoginResponse {
 }
 
 export const registerUser = (data: RegisterData) => {
-  return api.post<UserResponse>("/auth/register", data);
+  return api.post<UserResponse>(API.AUTH.REGISTER, data);
 };
 
 export const loginUser = (data: LoginData) => {
-  return api.post<LoginResponse>("/auth/login", data);
+  return api.post<LoginResponse>(API.AUTH.LOGIN, data);
 };
