@@ -10,6 +10,9 @@ export const API = {
       GET_BY_ID: (id: string) => `/api/admin/users/${id}`,
       UPDATE: (id: string) => `/api/admin/users/${id}`,
       DELETE: (id: string) => `/api/admin/users/${id}`,
-    }
-  }
+    },
+  },
+  USER: {
+    UPDATE: (id: string) => `/api/user/${id}`, 
+  },
 }

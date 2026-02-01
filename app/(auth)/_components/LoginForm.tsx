@@ -28,9 +28,9 @@ export default function LoginForm() {
       const role = result.user.role;
 
       if (role === "admin") {
-        router.push("/admin/dashboard");   // 👑 admin panel
+        router.push("/admin/dashboard");  
       } else {
-        router.push("/user/profile");  // 👤 user profile
+        router.push("/dashboard");  
       }
     } else {
       setError(result.message || "Login failed");

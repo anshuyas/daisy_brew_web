@@ -10,6 +10,7 @@ export default function CreateUserPage() {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("user");
   const [image, setImage] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -40,62 +41,100 @@ export default function CreateUserPage() {
     setLoading(false);
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImage(e.target.files[0]);
+      setPreview(URL.createObjectURL(e.target.files[0]));
+    }
+  };
+
   return (
-    <div className="max-w-md mx-auto p-6 bg-[#c2b5a4] rounded-xl shadow-md mt-8">
-      <h1 className="text-xl font-semibold mb-4">Create New User</h1>
-      {message && <p className="mb-2 text-sm text-red-600">{message}</p>}
-      <form onSubmit={submitHandler} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium">Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            className="w-full rounded-md border px-3 py-2 text-sm outline-none focus:border-[#6B4F4B]"
-            required
-          />
-        </div>
+    <div className="min-h-screen bg-[#f7f2ed] flex items-center justify-center px-4 py-8">
+      <div className="w-full max-w-md bg-[#fffaf3] rounded-2xl shadow-lg border border-[#e0d5c8] p-8">
+        <h1 className="text-2xl font-bold text-[#4B2E2B] mb-6 text-center">
+          Create New User
+        </h1>
 
-        <div>
-          <label className="block text-sm font-medium">Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            className="w-full rounded-md border px-3 py-2 text-sm outline-none focus:border-[#6B4F4B]"
-            required
-          />
-        </div>
+        {message && (
+          <p className="mb-4 text-sm text-center text-green-600 font-medium">
+            {message}
+          </p>
+        )}
 
-        <div>
-          <label className="block text-sm font-medium">Role</label>
-          <select
-            value={role}
-            onChange={e => setRole(e.target.value)}
-            className="w-full rounded-md border px-3 py-2 text-sm outline-none focus:border-[#6B4F4B]"
+        <form onSubmit={submitHandler} className="space-y-5">
+
+          {/* Email */}
+          <div className="flex flex-col">
+            <label className="text-sm font-semibold text-[#4B2E2B] mb-1">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              className="px-4 py-2 rounded-lg border border-[#d4c5b1] focus:border-[#6B4F4B] outline-none shadow-sm transition"
+              required
+            />
+          </div>
+
+          {/* Password */}
+          <div className="flex flex-col">
+            <label className="text-sm font-semibold text-[#4B2E2B] mb-1">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              className="px-4 py-2 rounded-lg border border-[#d4c5b1] focus:border-[#6B4F4B] outline-none shadow-sm transition"
+              required
+            />
+          </div>
+
+          {/* Role */}
+          <div className="flex flex-col">
+            <label className="text-sm font-semibold text-[#4B2E2B] mb-1">Role</label>
+            <select
+              value={role}
+              onChange={e => setRole(e.target.value)}
+              className="px-4 py-2 rounded-lg border border-[#d4c5b1] focus:border-[#6B4F4B] outline-none shadow-sm transition"
+            >
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+
+          {/* Profile Image */}
+          <div className="flex flex-col">
+            <label className="text-sm font-semibold text-[#4B2E2B] mb-2">Profile Image (optional)</label>
+            <div className="flex items-center gap-4">
+              {/* Preview Avatar */}
+              <div className="w-16 h-16 rounded-full bg-[#e0d5c8] overflow-hidden flex items-center justify-center border border-[#d4c5b1]">
+                {preview ? (
+                  <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-sm text-[#6B4F4B]">No Image</span>
+                )}
+              </div>
+              {/* Upload Button */}
+              <label className="cursor-pointer px-4 py-2 bg-[#3c2825] text-[#FAF5EE] rounded-lg hover:opacity-90 transition text-sm">
+                {image ? "Change Image" : "Upload Image"}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-2 rounded-lg bg-[#3c2825] text-[#FAF5EE] font-semibold hover:opacity-90 disabled:opacity-60 transition"
           >
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium">Profile Image (optional)</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={e => setImage(e.target.files ? e.target.files[0] : null)}
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-2 rounded-md bg-[#3c2825] text-[#FAF5EE] font-semibold hover:opacity-90 disabled:opacity-60"
-        >
-          {loading ? "Creating..." : "Create User"}
-        </button>
-      </form>
+            {loading ? "Creating..." : "Create User"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
