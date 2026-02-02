@@ -24,12 +24,18 @@ export default function LoginForm() {
 
       const result = await loginAction(values);
 
-      if (result.success) {
-        router.push("/dashboard");
+    if (result.success && result.user) {
+      const role = result.user.role;
+
+      if (role === "admin") {
+        router.push("/admin/dashboard");  
       } else {
-        setError(result.message || "Login failed");
+        router.push("/dashboard");  
       }
-    });
+    } else {
+      setError(result.message || "Login failed");
+    }
+  });
   };
 
   return (
