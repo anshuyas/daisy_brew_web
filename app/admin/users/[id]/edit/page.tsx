@@ -5,11 +5,12 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function EditUserPage() {
-  const { id } = useParams();
+  const params = useParams();
+  const id = params.id as string;
   const router = useRouter();
 
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState("user");
+  const [role, setRole] = useState<"user" | "admin">("user");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -59,13 +60,14 @@ export default function EditUserPage() {
     setError("");
     setSaving(true);
 
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setError("Unauthorized");
-        return;
-      }
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Unauthorized");
+      setSaving(false);
+      return;
+    }
 
+    try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${id}`,
         {
@@ -88,7 +90,7 @@ export default function EditUserPage() {
 
       setTimeout(() => {
         router.push(`/admin/users/${id}`);
-      }, 1000);
+      }, 800);
     } catch (err: any) {
       setError(err.message || "Failed to update user");
     } finally {
@@ -96,7 +98,6 @@ export default function EditUserPage() {
     }
   };
 
-  // Loading state
   if (loading) {
     return (
       <div className="text-center mt-20 text-[#3c2825]">
@@ -105,7 +106,6 @@ export default function EditUserPage() {
     );
   }
 
-  // UI
   return (
     <div className="max-w-xl mx-auto mt-10 p-6 bg-[#FAF5EE] rounded-2xl shadow-lg border">
       <h1 className="text-2xl font-bold text-[#4B2E2B] mb-6">
@@ -137,7 +137,9 @@ export default function EditUserPage() {
           </label>
           <select
             value={role}
-            onChange={(e) => setRole(e.target.value)}
+            onChange={(e) =>
+              setRole(e.target.value as "user" | "admin")
+            }
             className="w-full rounded-md border px-3 py-2 text-sm outline-none focus:border-[#6B4F4B]"
           >
             <option value="user">User</option>

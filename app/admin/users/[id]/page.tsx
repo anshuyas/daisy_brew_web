@@ -1,29 +1,34 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 
 interface User {
+  _id: string;
   email: string;
-  role: string;
+  role: "user" | "admin";
   createdAt: string;
   image?: string | null;
 }
 
 export default function UserDetailPage() {
-  const params = useParams();
-  const id = params.id as string;
+  const { id } = useParams<{ id: string }>();
+  const router = useRouter();
+
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
+    if (!id) return;
+
     const fetchUser = async () => {
       try {
         const token = localStorage.getItem("token");
 
         if (!token) {
-          setLoading(false);
+          setError("Unauthorized. Please login again.");
           return;
         }
 
@@ -36,14 +41,25 @@ export default function UserDetailPage() {
           }
         );
 
+        if (res.status === 401 || res.status === 403) {
+          setError("Access denied");
+          return;
+        }
+
+        if (res.status === 404) {
+          setError("User not found");
+          return;
+        }
+
         if (!res.ok) {
-          throw new Error("User not found");
+          throw new Error("Failed to fetch user");
         }
 
         const data = await res.json();
         setUser(data);
-      } catch (error) {
-        console.error("Failed to load user");
+      } catch (err) {
+        console.error(err);
+        setError("Something went wrong");
       } finally {
         setLoading(false);
       }
@@ -60,13 +76,21 @@ export default function UserDetailPage() {
     );
   }
 
-  if (!user) {
+  if (error) {
     return (
-      <div className="text-center mt-20 text-red-600">
-        User not found
+      <div className="text-center mt-20">
+        <p className="text-red-600 mb-4">{error}</p>
+        <Link
+          href="/admin/users"
+          className="px-4 py-2 bg-[#6B4F4B] text-[#FAF5EE] rounded-lg"
+        >
+          Back to Users
+        </Link>
       </div>
     );
   }
+
+  if (!user) return null;
 
   return (
     <div className="max-w-xl mx-auto mt-10 p-6 bg-[#FAF5EE] rounded-2xl shadow-lg border">
@@ -106,7 +130,7 @@ export default function UserDetailPage() {
 
       {/* Info */}
       <div className="space-y-2 text-[#3c2825]">
-        <p><strong>User ID:</strong> {id}</p>
+        <p><strong>User ID:</strong> {user._id}</p>
         <p>
           <strong>Created At:</strong>{" "}
           {new Date(user.createdAt).toLocaleDateString()}
@@ -116,11 +140,12 @@ export default function UserDetailPage() {
       {/* Actions */}
       <div className="mt-6 flex gap-3">
         <Link
-          href={`/admin/users/${id}/edit`}
+          href={`/admin/users/${user._id}/edit`}
           className="px-4 py-2 bg-[#6B4F4B] text-[#FAF5EE] rounded-lg hover:opacity-90"
         >
           Edit User
         </Link>
+
         <Link
           href="/admin/users"
           className="px-4 py-2 bg-[#6B4F4B] text-[#FAF5EE] rounded-lg hover:opacity-90"
