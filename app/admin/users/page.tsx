@@ -14,14 +14,20 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Fetch users
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const limit = 10;
+
+  // Fetch users with pagination
   useEffect(() => {
     const fetchUsers = async () => {
       try {
+        setLoading(true);
         const token = localStorage.getItem("token");
 
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/admin/users`,
+          `${process.env.NEXT_PUBLIC_API_URL}/admin/users?page=${page}&limit=${limit}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -32,7 +38,9 @@ export default function AdminUsersPage() {
         if (!res.ok) throw new Error("Failed to fetch users");
 
         const data = await res.json();
-        setUsers(data);
+
+        setUsers(data.users);
+        setTotalPages(data.pagination.totalPages);
       } catch (err) {
         setError("Unable to load users");
       } finally {
@@ -41,7 +49,7 @@ export default function AdminUsersPage() {
     };
 
     fetchUsers();
-  }, []);
+  }, [page]);
 
   // Delete user
   const handleDelete = async (userId: string) => {
@@ -66,9 +74,8 @@ export default function AdminUsersPage() {
 
       if (!res.ok) throw new Error("Delete failed");
 
-      // Remove user from UI
-      setUsers((prev) => prev.filter((user) => user._id !== userId));
-    } catch (err) {
+      setUsers((prev) => prev.filter((u) => u._id !== userId));
+    } catch {
       alert("Failed to delete user");
     }
   };
@@ -84,7 +91,7 @@ export default function AdminUsersPage() {
   return (
     <div className="min-h-screen bg-[#f7f2ed] p-6">
       <div className="max-w-6xl mx-auto bg-[#fffaf3] rounded-2xl shadow-lg border border-[#e0d5c8] p-6">
-        
+
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-[#4B2E2B]">
@@ -92,15 +99,13 @@ export default function AdminUsersPage() {
           </h1>
           <Link
             href="/admin/users/create"
-            className="px-4 py-2 bg-[#3c2825] text-[#FAF5EE] rounded-lg hover:opacity-90 transition"
+            className="px-4 py-2 bg-[#3c2825] text-[#FAF5EE] rounded-lg hover:opacity-90"
           >
             + Create User
           </Link>
         </div>
 
-        {error && (
-          <p className="mb-4 text-red-600">{error}</p>
-        )}
+        {error && <p className="mb-4 text-red-600">{error}</p>}
 
         {/* Table */}
         <div className="overflow-x-auto">
@@ -115,19 +120,13 @@ export default function AdminUsersPage() {
             </thead>
 
             <tbody>
-              {users.map((user, index) => (
+              {users.map((user) => (
                 <tr
                   key={user._id}
-                  className="border-b border-[#e0d5c8] hover:bg-[#f4ede1] transition"
+                  className="border-b border-[#e0d5c8] hover:bg-[#f4ede1]"
                 >
-                  <td className="p-3 text-[#4B2E2B]">
-                    {user._id}
-                  </td>
-
-                  <td className="p-3 font-medium text-[#3c2825]">
-                    {user.email}
-                  </td>
-
+                  <td className="p-3">{user._id}</td>
+                  <td className="p-3 font-medium">{user.email}</td>
                   <td className="p-3">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold ${
@@ -143,21 +142,19 @@ export default function AdminUsersPage() {
                   <td className="p-3 text-center space-x-2">
                     <Link
                       href={`/admin/users/${user._id}`}
-                      className="px-2 py-1 bg-[#f4e6d1] text-[#4B2E2B] rounded hover:bg-[#e0cda5]"
+                      className="px-2 py-1 bg-[#f4e6d1] rounded"
                     >
                       View
                     </Link>
-
                     <Link
                       href={`/admin/users/${user._id}/edit`}
-                      className="px-2 py-1 bg-[#e0cda5] text-[#3c2825] rounded hover:bg-[#d1b689]"
+                      className="px-2 py-1 bg-[#e0cda5] rounded"
                     >
                       Edit
                     </Link>
-
                     <button
                       onClick={() => handleDelete(user._id)}
-                      className="px-2 py-1 bg-[#f8d7da] text-[#721c24] rounded hover:bg-[#f5b7b9]"
+                      className="px-2 py-1 bg-[#f8d7da] text-[#721c24] rounded"
                     >
                       Delete
                     </button>
@@ -167,10 +164,7 @@ export default function AdminUsersPage() {
 
               {users.length === 0 && (
                 <tr>
-                  <td
-                    colSpan={4}
-                    className="text-center p-6 text-[#6b5a4e]"
-                  >
+                  <td colSpan={4} className="text-center p-6">
                     No users found
                   </td>
                 </tr>
@@ -178,6 +172,30 @@ export default function AdminUsersPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        <div className="flex justify-between items-center mt-6">
+          <button
+            disabled={page === 1}
+            onClick={() => setPage((p) => p - 1)}
+            className="px-4 py-2 bg-[#6B4F4B] text-white rounded disabled:opacity-50"
+          >
+            Previous
+          </button>
+
+          <span className="text-sm text-[#4B2E2B]">
+            Page {page} of {totalPages}
+          </span>
+
+          <button
+            disabled={page === totalPages}
+            onClick={() => setPage((p) => p + 1)}
+            className="px-4 py-2 bg-[#6B4F4B] text-white rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+
       </div>
     </div>
   );
