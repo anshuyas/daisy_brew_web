@@ -12,7 +12,8 @@ interface User {
 }
 
 export default function UserDetailPage() {
-  const { id } = useParams();
+  const params = useParams();
+  const id = params.id as string;
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -22,7 +23,7 @@ export default function UserDetailPage() {
         const token = localStorage.getItem("token");
 
         if (!token) {
-          console.error("No token found");
+          setLoading(false);
           return;
         }
 

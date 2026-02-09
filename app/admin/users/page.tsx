@@ -1,21 +1,95 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
-const dummyUsers = [
-  { id: "1", email: "user1@example.com", role: "user" },
-  { id: "2", email: "user2@example.com", role: "user" },
-  { id: "3", email: "user3@example.com", role: "user" },
-];
+type User = {
+  _id: string;
+  email: string;
+  role: "user" | "admin";
+};
 
 export default function AdminUsersPage() {
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // Fetch users
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/admin/users`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!res.ok) throw new Error("Failed to fetch users");
+
+        const data = await res.json();
+        setUsers(data);
+      } catch (err) {
+        setError("Unable to load users");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  // Delete user
+  const handleDelete = async (userId: string) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this user?"
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!res.ok) throw new Error("Delete failed");
+
+      // Remove user from UI
+      setUsers((prev) => prev.filter((user) => user._id !== userId));
+    } catch (err) {
+      alert("Failed to delete user");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="text-center mt-20 text-[#3c2825]">
+        Loading users...
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#f7f2ed] p-6">
       <div className="max-w-6xl mx-auto bg-[#fffaf3] rounded-2xl shadow-lg border border-[#e0d5c8] p-6">
         
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-[#4B2E2B]">Users Management</h1>
+          <h1 className="text-2xl font-bold text-[#4B2E2B]">
+            Users Management
+          </h1>
           <Link
             href="/admin/users/create"
             className="px-4 py-2 bg-[#3c2825] text-[#FAF5EE] rounded-lg hover:opacity-90 transition"
@@ -24,7 +98,11 @@ export default function AdminUsersPage() {
           </Link>
         </div>
 
-        {/* Table Container */}
+        {error && (
+          <p className="mb-4 text-red-600">{error}</p>
+        )}
+
+        {/* Table */}
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-sm">
             <thead>
@@ -37,17 +115,19 @@ export default function AdminUsersPage() {
             </thead>
 
             <tbody>
-              {dummyUsers.map((user, index) => (
+              {users.map((user, index) => (
                 <tr
-                  key={user.id}
-                  className={`border-b border-[#e0d5c8] ${
-                    index % 2 === 0 ? "bg-[#fffaf3]" : "bg-[#fffaf3]"
-                  } hover:bg-[#f4ede1] transition`}
+                  key={user._id}
+                  className="border-b border-[#e0d5c8] hover:bg-[#f4ede1] transition"
                 >
-                  <td className="p-3 text-[#4B2E2B]">{user.id}</td>
-                  <td className="p-3 font-medium text-[#3c2825]">{user.email}</td>
+                  <td className="p-3 text-[#4B2E2B]">
+                    {user._id}
+                  </td>
 
-                  {/* Role Badge */}
+                  <td className="p-3 font-medium text-[#3c2825]">
+                    {user.email}
+                  </td>
+
                   <td className="p-3">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold ${
@@ -60,26 +140,41 @@ export default function AdminUsersPage() {
                     </span>
                   </td>
 
-                  {/* Actions */}
                   <td className="p-3 text-center space-x-2">
                     <Link
-                      href={`/admin/users/${user.id}`}
-                      className="px-2 py-1 bg-[#f4e6d1] text-[#4B2E2B] rounded hover:bg-[#e0cda5] transition"
+                      href={`/admin/users/${user._id}`}
+                      className="px-2 py-1 bg-[#f4e6d1] text-[#4B2E2B] rounded hover:bg-[#e0cda5]"
                     >
                       View
                     </Link>
+
                     <Link
-                      href={`/admin/users/${user.id}/edit`}
-                      className="px-2 py-1 bg-[#e0cda5] text-[#3c2825] rounded hover:bg-[#d1b689] transition"
+                      href={`/admin/users/${user._id}/edit`}
+                      className="px-2 py-1 bg-[#e0cda5] text-[#3c2825] rounded hover:bg-[#d1b689]"
                     >
                       Edit
                     </Link>
-                    <button className="px-2 py-1 bg-[#f8d7da] text-[#721c24] rounded hover:bg-[#f5b7b9] transition">
+
+                    <button
+                      onClick={() => handleDelete(user._id)}
+                      className="px-2 py-1 bg-[#f8d7da] text-[#721c24] rounded hover:bg-[#f5b7b9]"
+                    >
                       Delete
                     </button>
                   </td>
                 </tr>
               ))}
+
+              {users.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={4}
+                    className="text-center p-6 text-[#6b5a4e]"
+                  >
+                    No users found
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
