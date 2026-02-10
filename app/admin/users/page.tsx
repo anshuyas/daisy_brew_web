@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import api from "@/lib/api/axios";
 
 type User = {
+  fullName: any;
   _id: string;
   email: string;
   role: "user" | "admin";
@@ -11,92 +13,70 @@ type User = {
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
+  const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState<"all" | "admin" | "user">(
+    "all"
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
   const limit = 10;
 
   // Fetch users with pagination
+  const fetchUsers = async (page: number) => {
+    try {
+      setLoading(true);
+      const response = await api.get(
+        `/admin/users?page=${page}&limit=${limit}`
+      );
+      setUsers(response.data.users);
+      setTotalPages(response.data.pagination.totalPages);
+    } catch (err: any) {
+      console.error(err);
+      setError("Failed to load users");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        setLoading(true);
-        const token = localStorage.getItem("token");
-
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/admin/users?page=${page}&limit=${limit}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!res.ok) throw new Error("Failed to fetch users");
-
-        const data = await res.json();
-
-        setUsers(data.users);
-        setTotalPages(data.pagination.totalPages);
-      } catch (err) {
-        setError("Unable to load users");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUsers();
+    fetchUsers(page);
   }, [page]);
 
   // Delete user
   const handleDelete = async (userId: string) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this user?"
-    );
-
-    if (!confirmDelete) return;
+    if (!confirm("Are you sure you want to delete this user?")) return;
 
     try {
-      const token = localStorage.getItem("token");
-
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!res.ok) throw new Error("Delete failed");
-
+      await api.delete(`/admin/users/${userId}`);
       setUsers((prev) => prev.filter((u) => u._id !== userId));
-    } catch {
+    } catch (err) {
       alert("Failed to delete user");
     }
   };
 
-  if (loading) {
-    return (
-      <div className="text-center mt-20 text-[#3c2825]">
-        Loading users...
-      </div>
-    );
-  }
+  // Filtered users for search + role
+  const filteredUsers = users.filter((user) => {
+    const matchesSearch =
+      user.email.toLowerCase().includes(search.toLowerCase()) ||
+      (user.fullName && user.fullName.toLowerCase().includes(search.toLowerCase()));
+
+    const matchesRole = roleFilter === "all" || user.role === roleFilter;
+
+    return matchesSearch && matchesRole;
+  });
+
+  if (loading) return <p className="text-center mt-10">Loading users...</p>;
+  if (error) return <p className="text-center mt-10 text-red-600">{error}</p>;
 
   return (
     <div className="min-h-screen bg-[#f7f2ed] p-6">
       <div className="max-w-6xl mx-auto bg-[#fffaf3] rounded-2xl shadow-lg border border-[#e0d5c8] p-6">
-
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-[#4B2E2B]">
-            Users Management
-          </h1>
+          <h1 className="text-2xl font-bold text-[#4B2E2B]">Users Management</h1>
           <Link
             href="/admin/users/create"
             className="px-4 py-2 bg-[#3c2825] text-[#FAF5EE] rounded-lg hover:opacity-90"
@@ -105,7 +85,25 @@ export default function AdminUsersPage() {
           </Link>
         </div>
 
-        {error && <p className="mb-4 text-red-600">{error}</p>}
+        {/* Search & Filter */}
+        <div className="flex flex-col md:flex-row md:items-center md:gap-4 mb-6">
+          <input
+            type="text"
+            placeholder="Search by email / fullname"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="px-4 py-2 rounded-lg border border-[#d4c5b1] focus:border-[#6B4F4B] outline-none shadow-sm transition mb-2 md:mb-0"
+          />
+          <select
+            value={roleFilter}
+            onChange={(e) => setRoleFilter(e.target.value as any)}
+            className="px-4 py-2 rounded-lg border border-[#d4c5b1] focus:border-[#6B4F4B] outline-none shadow-sm transition"
+          >
+            <option value="all">All roles</option>
+            <option value="admin">Admin</option>
+            <option value="user">User</option>
+          </select>
+        </div>
 
         {/* Table */}
         <div className="overflow-x-auto">
@@ -120,7 +118,7 @@ export default function AdminUsersPage() {
             </thead>
 
             <tbody>
-              {users.map((user) => (
+              {filteredUsers.map((user) => (
                 <tr
                   key={user._id}
                   className="border-b border-[#e0d5c8] hover:bg-[#f4ede1]"
@@ -138,7 +136,6 @@ export default function AdminUsersPage() {
                       {user.role}
                     </span>
                   </td>
-
                   <td className="p-3 text-center space-x-2">
                     <Link
                       href={`/admin/users/${user._id}`}
@@ -162,7 +159,7 @@ export default function AdminUsersPage() {
                 </tr>
               ))}
 
-              {users.length === 0 && (
+              {filteredUsers.length === 0 && (
                 <tr>
                   <td colSpan={4} className="text-center p-6">
                     No users found
@@ -195,7 +192,6 @@ export default function AdminUsersPage() {
             Next
           </button>
         </div>
-
       </div>
     </div>
   );
