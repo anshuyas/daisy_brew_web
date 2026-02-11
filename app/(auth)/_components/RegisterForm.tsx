@@ -43,9 +43,9 @@ export default function RegisterForm() {
           type="text"
           placeholder="Keifer Watson"
           className="h-10 w-full rounded-md border px-3 text-sm outline-none focus:border-brown-700"
-          {...register("name")}
+          {...register("fullName")}
         />
-        {errors.name && <p className="text-xs text-red-600">{errors.name.message}</p>}
+        {errors.fullName && <p className="text-xs text-red-600">{errors.fullName.message}</p>}
       </div>
 
       <div className="space-y-1">

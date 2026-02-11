@@ -8,7 +8,7 @@ export const loginSchema = z.object({
 export type LoginData = z.infer<typeof loginSchema>;
 
 export const registerSchema = z.object({
-  name: z.string().min(2, { message: "Enter your name" }),
+  fullName: z.string().min(2, { message: "Enter your fullname" }),
   email: z.string().email({ message: "Enter a valid email" }),
   password: z.string().min(6, { message: "Minimum 6 characters" }),
   confirmPassword: z.string().min(6, { message: "Minimum 6 characters" }),

@@ -1,75 +1,127 @@
 "use client";
 
+import { getAuthToken, getUserData } from "@/lib/cookie";
+import axios from "axios";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+
+const categories = ["Coffee", "Matcha", "Smoothies", "Bubble Tea", "Tea"];
+
+const menuItems = [
+  { name: "Cappuccino", price: 250, image: "/images/cappuccino.jpg" },
+  { name: "Americano", price: 150, image: "/images/americano.jpg" },
+  { name: "Espresso", price: 100, image: "/images/espresso.jpg" },
+  { name: "Latte", price: 200, image: "/images/latte.jpg" },
+  { name: "Iced Macchiato", price: 295, image: "/images/iced macchiato.jpg" },
+  { name: "Ristretto", price: 125, image: "/images/ristretto.webp" },
+  { name: "Turkish Coffee", price: 230, image: "/images/turkish coffee.jpg" },
+  { name: "Dalgona", price: 210, image: "/images/dalgona.jpg" },
+  { name: "Mocha", price: 185, image: "/images/mocha.webp" },
+  { name: "Irish Coffee", price: 250, image: "/images/irish coffee.jpg" },
+  { name: "Espresso Con Pana", price: 190, image: "/images/espresso conpana.jpg" },
+  { name: "Affogato", price: 140, image: "/images/affogato.webp" },
+];
+
+interface UserData {
+  _id: string;
+  email: string;
+  fullName?: string;
+  role: string;
+}
 
 export default function DashboardPage() {
+  const [activeCategory, setActiveCategory] = useState("Coffee");
+  const [user, setUser] = useState<UserData | null>(null);
+
+    useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = getAuthToken();
+        if (!token) return;
+
+        const response = await axios.get("http://localhost:5050/api/user/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setUser(response.data.user);
+      } catch (err) {
+        console.error("Failed to fetch user:", err);
+      }
+    };
+
+    fetchUser();
+  }, []);
+  
   return (
-    <div className="min-h-screen bg-[#F5F0E6] flex flex-col">
-      
-      {/* Header */}
-      <header className="flex justify-between items-center bg-[#DCCDB3] px-6 py-4 shadow-md">
-        <h1 className="text-3xl font-bold text-[#4B2E2B]">Daisy Brew Dashboard</h1>
-        <Link
-          href="/login"
-          className="bg-[#4B2E2B] text-[#FAF5EE] px-4 py-2 rounded-lg hover:bg-[#6B4F4B] transition"
-        >
-          Logout
-        </Link>
-      </header>
+    <div className="min-h-screen flex bg-[#8A7356]">
+      {/* Sidebar */}
+      <aside className="w-25 bg-[#F7D196] flex flex-col items-center py-8 space-y-20">
+        <div className="w-12 h-12 bg-[#DCCDB3] rounded-full flex items-center justify-center">
+          <img src="/images/logo.png" alt="Logo" className="w-12 h-12" />
+        </div>
+        <Link href="/" className="text-2xl">🏠</Link>
+        <Link href="/user/orders" className="text-2xl">📋</Link>
+        <Link href="/notifications" className="text-2xl">🔔</Link>
+        <Link href="/user/profile" className="text-2xl">👤</Link>
+      </aside>
 
       {/* Main Content */}
-      <main className="flex-1 px-6 py-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        
-        {/* Orders Card */}
-        <div className="bg-[#FAF5EE] p-6 rounded-2xl shadow-md hover:shadow-lg transition cursor-pointer">
-          <h2 className="text-xl font-semibold text-[#4B2E2B] mb-3">Orders</h2>
-          <p className="text-[#6B4F4B] mb-4">View and manage your beverage orders here.</p>
-          <Link
-            href="/user/orders"
-            className="inline-block px-4 py-2 bg-[#3C2825] text-[#FAF5EE] rounded-lg hover:bg-[#6B4F4B] transition"
-          >
-            Go to Orders
-          </Link>
+      <main className="flex-1 p-6 bg-[#8B7356] text-white flex flex-col">
+        {/* Greeting and Cart Icon */}
+        <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl md:text-2xl">
+              Good to see you, {user?.fullName || "Username"}!
+            </h2>     
+          <Link href="/cart" className="text-3xl">🛒</Link>
         </div>
 
-        {/* Profile Card */}
-        <div className="bg-[#FAF5EE] p-6 rounded-2xl shadow-md hover:shadow-lg transition cursor-pointer">
-          <h2 className="text-xl font-semibold text-[#4B2E2B] mb-3">Profile</h2>
-          <p className="text-[#6B4F4B] mb-4">
-            Update your account info and preferences.
-          </p>
-          <Link
-            href="/user/profile"
-            className="inline-block px-4 py-2 bg-[#3C2825] text-[#FAF5EE] rounded-lg hover:bg-[#6B4F4B] transition"
-          >
-            Go to Profile
-          </Link>
+        {/* Search Bar Below Greeting */}
+          <div className="mb-8 flex justify-end-safe">
+            <div className="flex items-center bg-[#FAF5EE] rounded-full px-6 py-2 w-full md:w-70 text-black">
+              <input
+                type="text"
+                placeholder="Search..."
+                className="flex-1 bg-transparent outline-none"
+              />
+              <button className="ml-2">🔍</button>
+            </div>
+          </div>
+
+        {/* Categories */}
+        <div className="flex space-x-4 mb-6">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`px-4 py-2 rounded-full ${
+                activeCategory === cat
+                  ? "bg-[#4B2E2B] text-white"
+                  : "bg-[#FAF5EE] text-black"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
         </div>
 
-        {/* Menu Card */}
-        <div className="bg-[#FAF5EE] p-6 rounded-2xl shadow-md hover:shadow-lg transition cursor-pointer">
-          <h2 className="text-xl font-semibold text-[#4B2E2B] mb-3">Menu</h2>
-          <p className="text-[#6B4F4B] mb-4">Check the latest beverages available for ordering.</p>
-          <Link
-            href="/user/menu"
-            className="inline-block px-4 py-2 bg-[#3C2825] text-[#FAF5EE] rounded-lg hover:bg-[#6B4F4B] transition"
-          >
-            View Menu
-          </Link>
+        {/* Menu Items */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 flex-1">
+          {menuItems
+            .filter((item) => item.name.includes(activeCategory) || activeCategory === "Coffee")
+            .map((item) => (
+              <div
+                key={item.name}
+                className="bg-[#FFFFFF] text-black rounded-2xl p-4 flex flex-col items-center"
+              >
+                <img src={item.image} alt={item.name} className="w-36 h-32 object-cover mb-2 rounded-xl" />
+                <h3 className="font-semibold text-lg">{item.name}</h3>
+                <p className="mb-2">Rs. {item.price}</p>
+                <button className="bg-[#4B2E2B] text-white px-4 py-1 rounded-full">+</button>
+              </div>
+            ))}
         </div>
-
-        {/* Reports Card */}
-        <div className="bg-[#FAF5EE] p-6 rounded-2xl shadow-md hover:shadow-lg transition cursor-pointer">
-          <h2 className="text-xl font-semibold text-[#4B2E2B] mb-3">Reports</h2>
-          <p className="text-[#6B4F4B] mb-4">View your order history and analytics.</p>
-          <Link
-            href="/user/reports"
-            className="inline-block px-4 py-2 bg-[#3C2825] text-[#FAF5EE] rounded-lg hover:bg-[#6B4F4B] transition"
-          >
-            View Reports
-          </Link>
-        </div>
-
       </main>
     </div>
   );
