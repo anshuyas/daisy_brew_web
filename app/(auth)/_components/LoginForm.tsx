@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { loginSchema, LoginData } from "../schema";
 import { loginAction } from "@/lib/actions/auth-action";
+import { setAuthToken, setUserData } from "@/lib/cookie";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -24,18 +25,19 @@ export default function LoginForm() {
 
       const result = await loginAction(values);
 
-    if (result.success && result.user) {
-      const role = result.user.role;
+    if (result.success && result.user && result.token) {
+      setAuthToken(result.token);
+        setUserData(result.user);
 
-      if (role === "admin") {
-        router.push("/admin/dashboard");  
+        if (result.user.role === "admin") {
+          router.push("/admin/dashboard");
+        } else {
+          router.push("/dashboard");
+        }
       } else {
-        router.push("/dashboard");  
+        setError(result.message || "Login failed");
       }
-    } else {
-      setError(result.message || "Login failed");
-    }
-  });
+    });
   };
 
   return (
