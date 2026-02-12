@@ -5,6 +5,7 @@ import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import DrinkCustomizer from "@/components/DrinkCustomizer";
+import { useCart } from "@/context/CartContext";
 
 const categories = ["Coffee", "Matcha", "Smoothies", "Bubble Tea", "Tea"];
 
@@ -34,8 +35,8 @@ export default function DashboardPage() {
   const [activeCategory, setActiveCategory] = useState("Coffee");
   const [user, setUser] = useState<UserData | null>(null);
   const [customizingDrink, setCustomizingDrink] = useState<typeof menuItems[0] | null>(null);
-  const [cart, setCart] = useState<any[]>([]);
   const [showCart, setShowCart] = useState(false);
+  const { cart, addToCart, removeFromCart, updateQuantity } = useCart();
 
   const toggleCart = () => setShowCart(prev => !prev);
 
@@ -45,22 +46,9 @@ export default function DashboardPage() {
     image: drink.image, 
     quantity: drink.quantity || 1,
   };
-    setCart(prev => [...prev, cartItem]);
+    addToCart(cartItem); 
     setCustomizingDrink(null);
   };
-
-  // load cart on page load
-  useEffect(() => {
-    const storedCart = localStorage.getItem("cart");
-    if (storedCart) {
-      setCart(JSON.parse(storedCart));
-    }
-  }, []);
-
-  // (save cart whenever it changes)
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -195,9 +183,7 @@ export default function DashboardPage() {
                 <button
                   onClick={() => {
                     if (item.quantity > 1) {
-                      setCart(prev =>
-                        prev.map((c, i) => i === index ? { ...c, quantity: c.quantity - 1 } : c)
-                      );
+                      updateQuantity(index, item.quantity - 1);
                     }
                   }}
                   className="px-2 py-1 bg-gray-200 rounded-full hover:bg-gray-300"
@@ -206,17 +192,13 @@ export default function DashboardPage() {
                 <span className="w-5 text-center">{item.quantity}</span>
 
                 <button
-                  onClick={() => {
-                    setCart(prev =>
-                      prev.map((c, i) => i === index ? { ...c, quantity: c.quantity + 1 } : c)
-                    );
-                  }}
+                   onClick={() => updateQuantity(index, item.quantity + 1)}
                   className="px-2 py-1 bg-gray-200 rounded-full hover:bg-gray-300"
                 >+</button>
               </div>
 
               <button
-                onClick={() => setCart(prev => prev.filter((_, i) => i !== index))}
+                onClick={() => removeFromCart(index)}
                 className="text-red-500 hover:text-red-700 text-xl ml-2"
               >
                 🗑
