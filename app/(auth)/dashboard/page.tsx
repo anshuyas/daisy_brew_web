@@ -80,7 +80,7 @@ export default function DashboardPage() {
         </div>
         <Link href="/dashboard" className="text-2xl">🏠</Link>
         <Link href="/user/orders" className="text-2xl">📋</Link>
-        <Link href="/notifications" className="text-2xl">🔔</Link>
+        <Link href="/user/notification" className="text-2xl">🔔</Link>
         <Link href="/user/profile" className="text-2xl">👤</Link>
       </aside>
 
