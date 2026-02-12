@@ -39,12 +39,12 @@ export default function CheckoutPage() {
   }, []);
 
   const handleConfirmOrder = () => {
-    alert("Order Confirmed! 🎉");
+    alert("Order Confirmed!");
     router.push("/dashboard");
   };
 
   return (
-  <div className="min-h-screen bg-gradient-to-b from-[#f5f0e6] to-[#f0e0d0] p-6">
+  <div className="min-h-screen bg-linear-to-b from-[#f5f0e6] to-[#f0e0d0] p-6">
     <h1 className="text-4xl font-bold text-[#4B2E2B] text-center mb-8">Checkout</h1>
 
     <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">

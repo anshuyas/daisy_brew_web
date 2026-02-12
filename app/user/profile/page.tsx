@@ -240,7 +240,7 @@ export default function UserProfileSection() {
             <button
               onClick={handleSaveProfile}
               disabled={loading}
-              className="mt-4 px-6 py-2 rounded-xl bg-gradient-to-r from-[#4B2E2B] to-[#6B4F4B] text-white font-semibold hover:scale-105 transform transition duration-300 disabled:opacity-50"
+              className="mt-4 px-6 py-2 rounded-xl bg-linear-to-r from-[#4B2E2B] to-[#6B4F4B] text-white font-semibold hover:scale-105 transform transition duration-300 disabled:opacity-50"
             >
               {loading ? "Saving..." : "Save Changes"}
             </button>
