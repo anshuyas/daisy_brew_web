@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import DrinkCustomizer from "@/components/DrinkCustomizer";
 import { useCart } from "@/context/CartContext";
+import { useRouter } from "next/navigation";
 
 const categories = ["Coffee", "Matcha", "Smoothies", "Bubble Tea", "Tea"];
 
@@ -37,6 +38,8 @@ export default function DashboardPage() {
   const [customizingDrink, setCustomizingDrink] = useState<typeof menuItems[0] | null>(null);
   const [showCart, setShowCart] = useState(false);
   const { cart, addToCart, removeFromCart, updateQuantity } = useCart();
+
+  const router = useRouter();
 
   const toggleCart = () => setShowCart(prev => !prev);
 
@@ -212,7 +215,7 @@ export default function DashboardPage() {
 
       {cart.length > 0 && (
         <button
-          onClick={() => alert("Proceed to Checkout")}
+          onClick={() => router.push("/user/checkout")}
           className="mt-4 w-full py-3 bg-[#4B2E2B] text-white font-semibold rounded-xl hover:bg-[#6B4F4B] transition"
         >
           Checkout
