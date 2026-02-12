@@ -2,12 +2,15 @@ import Cookies from "js-cookie";
 
 export interface UserData {
   _id: string;
+  username: string;
+  fullName: string;
   email: string;
-  username?: string;
   role: string;
-  createdAt?: string;
-  updatedAt?: string;
-  [key: string]: any;
+  mobile?: string;
+  location?: string;
+  image?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 //client side
