@@ -37,6 +37,7 @@ export default function DashboardPage() {
   const [user, setUser] = useState<UserData | null>(null);
   const [customizingDrink, setCustomizingDrink] = useState<typeof menuItems[0] | null>(null);
   const [showCart, setShowCart] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const { cart, addToCart, removeFromCart, updateQuantity } = useCart();
 
   const router = useRouter();
@@ -71,6 +72,13 @@ export default function DashboardPage() {
     fetchUser();
   }, []);
 
+  // Filter menu items based on category and search
+  const filteredMenuItems = menuItems.filter(item => {
+    const matchesCategory = activeCategory === "Coffee" ? true : item.name.includes(activeCategory);
+    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
   return (
     <div className="min-h-screen flex bg-[#8A7356]">
       {/* Sidebar */}
@@ -94,15 +102,17 @@ export default function DashboardPage() {
           <button onClick={toggleCart} className="text-3xl">🛒</button>
         </div>
 
-        {/* Search Bar */}
+         {/* Search Bar */}
         <div className="mb-8 flex justify-end-safe">
           <div className="flex items-center bg-[#FAF5EE] rounded-full px-6 py-2 w-full md:w-70 text-black">
             <input
               type="text"
               placeholder="Search..."
               className="flex-1 bg-transparent outline-none"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <button className="ml-2">🔍</button>
+            <button className="ml-2" onClick={() => { }}>🔍</button>
           </div>
         </div>
 
@@ -121,30 +131,31 @@ export default function DashboardPage() {
           ))}
         </div>
 
-        {/* Menu Items */}
+         {/* Menu Items */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 flex-1">
-          {menuItems
-            .filter(item => item.name.includes(activeCategory) || activeCategory === "Coffee")
-            .map(item => (
-              <div
-                key={item.name}
-                className="bg-[#FFFFFF] text-black rounded-2xl p-4 flex flex-col items-center"
+          {filteredMenuItems.length === 0 && (
+            <p className="text-white text-center col-span-full">No drinks found.</p>
+          )}
+          {filteredMenuItems.map(item => (
+            <div
+              key={item.name}
+              className="bg-[#FFFFFF] text-black rounded-2xl p-4 flex flex-col items-center"
+            >
+              <img
+                src={item.image}
+                alt={item.name}
+                className="w-36 h-32 object-cover mb-2 rounded-xl"
+              />
+              <h3 className="font-semibold text-lg">{item.name}</h3>
+              <p className="mb-2">Rs. {item.price}</p>
+              <button
+                className="bg-[#4B2E2B] text-white px-4 py-1 rounded-full"
+                onClick={() => setCustomizingDrink(item)}
               >
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-36 h-32 object-cover mb-2 rounded-xl"
-                />
-                <h3 className="font-semibold text-lg">{item.name}</h3>
-                <p className="mb-2">Rs. {item.price}</p>
-                <button
-                  className="bg-[#4B2E2B] text-white px-4 py-1 rounded-full"
-                  onClick={() => setCustomizingDrink(item)}
-                >
-                  +
-                </button>
-              </div>
-            ))}
+                +
+              </button>
+            </div>
+          ))}
         </div>
       </main>
 
@@ -158,10 +169,10 @@ export default function DashboardPage() {
       )}
 
       {/* Cart Modal */}
-{showCart && (
-  <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-    <div className="bg-[#FAF5EE] w-150 max:w-225 h-[85vh] p-8 rounded-2xl flex flex-col space-y-4 shadow-lg">
-      
+    {showCart && (
+      <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+        <div className="bg-[#FAF5EE] w-150 max:w-225 h-[85vh] p-8 rounded-2xl flex flex-col space-y-4 shadow-lg">
+          
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold text-[#4B2E2B]">Your Cart</h2>
