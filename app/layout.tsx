@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { NotificationProvider } from "@/context/NotificationContext";
 import { CartProvider } from "@/context/CartContext";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,8 +27,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider>
           <CartProvider>
-              {children}
-          </CartProvider>
+            <NotificationProvider>
+                {children}
+              <Toaster position="top-right" />
+            </NotificationProvider>
+           </CartProvider>
         </ThemeProvider>
       </body>
     </html>

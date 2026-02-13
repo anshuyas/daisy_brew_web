@@ -160,7 +160,7 @@ export default function DashboardPage() {
       {/* Cart Modal */}
 {showCart && (
   <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-    <div className="bg-[#FAF5EE] w-150 max:w-[900px] h-[85vh] p-8 rounded-2xl flex flex-col space-y-4 shadow-lg">
+    <div className="bg-[#FAF5EE] w-150 max:w-225 h-[85vh] p-8 rounded-2xl flex flex-col space-y-4 shadow-lg">
       
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
@@ -169,7 +169,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Cart Items */}
-      <div className="flex flex-col space-y-4 max-h-[500px] overflow-y-auto">
+      <div className="flex flex-col space-y-4 max-h-125 overflow-y-auto">
         {cart.length === 0 ? (
           <p className="text-gray-600">Your cart is empty</p>
         ) : (

@@ -84,7 +84,7 @@ export default function UserProfileSection() {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#f0f0f0] p-10">
+    <div className="min-h-screen flex bg-[#F2D9B3] p-10">
       {/* Sidebar */}
       <div className="w-85 bg-white rounded-3xl shadow-xl p-8 flex flex-col items-center space-y-4">
         {/* Profile Image */}

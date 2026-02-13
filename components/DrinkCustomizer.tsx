@@ -46,7 +46,7 @@ export default function DrinkCustomizer({ drink, onClose, onAddToCart }: DrinkCu
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl w-130 max-w-[600px] h-[95vh] p-8 flex flex-col space-y-3 shadow-lg">
+      <div className="bg-white rounded-2xl w-130 max-w-150 h-[95vh] p-8 flex flex-col space-y-3 shadow-lg">
         {/* Header */}
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold">{drink.name}</h2>
