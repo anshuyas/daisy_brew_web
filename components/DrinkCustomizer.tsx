@@ -2,6 +2,7 @@
 
 import { CartItem } from "@/types/drink";
 import { useState } from "react";
+import { MenuItem } from "@/types/menu";
 
 interface DrinkOption {
   quantity: number;
@@ -12,7 +13,7 @@ interface DrinkOption {
 }
 
 interface DrinkCustomizerProps {
-  drink: { name: string; price: number; image: string };
+  drink: MenuItem;
   onClose: () => void;
   onAddToCart: (drink: CartItem) => void;
 }
@@ -43,6 +44,15 @@ export default function DrinkCustomizer({ drink, onClose, onAddToCart }: DrinkCu
     onAddToCart({ name: drink.name, price: drink.price, image: drink.image, quantity, size, temperature, sugar, milk });
     onClose();
   };
+
+  const themeColorMap: Record<string, string> = {
+  Coffee: "bg-[#4B2E2B]",      
+  Matcha: "bg-[#1A461E]",   
+  Smoothies: "bg-orange-300",
+  "Bubble Tea": "bg-purple-400",
+  Tea: "bg-amber-300",
+};
+const themeColor = themeColorMap[drink.category] || "bg-gray-600";
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -80,7 +90,7 @@ export default function DrinkCustomizer({ drink, onClose, onAddToCart }: DrinkCu
               <button
                 key={s}
                 className={`px-3 py-1 rounded-full border ${
-                  size === s ? "bg-[#6B4F4B] text-white" : "bg-gray-100"
+                  size === s ? `${themeColor} text-white` : "bg-gray-100"
                 }`}
                 onClick={() => handleChange("size", s as DrinkOption["size"])}
               >
@@ -98,7 +108,7 @@ export default function DrinkCustomizer({ drink, onClose, onAddToCart }: DrinkCu
               <button
                 key={t}
                 className={`px-3 py-1 rounded-full border ${
-                  temperature === t ? "bg-[#6B4F4B] text-white" : "bg-gray-100"
+                  temperature === t ? `${themeColor} text-white` : "bg-gray-100"
                 }`}
                 onClick={() => handleChange("temperature", t as DrinkOption["temperature"])}
               >
@@ -116,7 +126,7 @@ export default function DrinkCustomizer({ drink, onClose, onAddToCart }: DrinkCu
               <button
                 key={s}
                 className={`px-3 py-1 rounded-full border ${
-                  sugar === s ? "bg-[#6B4F4B] text-white" : "bg-gray-100"
+                  sugar === s ? `${themeColor} text-white` : "bg-gray-100"
                 }`}
                 onClick={() => handleChange("sugar", s as DrinkOption["sugar"])}
               >
@@ -134,7 +144,7 @@ export default function DrinkCustomizer({ drink, onClose, onAddToCart }: DrinkCu
               <button
                 key={m}
                 className={`px-3 py-1 rounded-full border ${
-                  milk === m ? "bg-[#6B4F4B] text-white" : "bg-gray-100"
+                  milk === m ? `${themeColor} text-white` : "bg-gray-100"
                 }`}
                 onClick={() => handleChange("milk", m as DrinkOption["milk"])}
               >
@@ -148,13 +158,13 @@ export default function DrinkCustomizer({ drink, onClose, onAddToCart }: DrinkCu
         <div className="flex space-x-2 mt-4">
           <button
             onClick={handleAddToCart}
-            className="flex-1 px-4 py-2 bg-[#4B2E2B] text-white rounded-xl"
+            className={`flex-1 px-4 py-2 ${themeColor} text-white rounded-xl`}
           >
             Add to Cart
           </button>
           <button
             onClick={() => alert("Buy Now")}
-            className="flex-1 px-4 py-2 bg-[#4B2E2B] text-white rounded-xl"
+            className={`flex-1 px-4 py-2 ${themeColor} text-white rounded-xl`}
           >
             Buy Now
           </button>
