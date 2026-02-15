@@ -6,6 +6,8 @@ export type Category =
   | "Tea";
 
 export interface MenuItem {
+  _id: string;
+  isAvailable: boolean;
   name: string;
   price: number;
   image: string;

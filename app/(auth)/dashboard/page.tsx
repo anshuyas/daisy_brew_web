@@ -23,54 +23,59 @@ interface CartItem {
   milk: "None" | "Oat milk" | "Soy milk" | "Almond milk";
 }
 
-const menuItems: MenuItem[] = [
-  { name: "Cappuccino", price: 250, image: "/images/cappuccino.jpg", category: "Coffee"},
-  { name: "Americano", price: 150, image: "/images/americano.jpg", category: "Coffee" },
-  { name: "Espresso", price: 100, image: "/images/espresso.jpg", category: "Coffee" },
-  { name: "Latte", price: 200, image: "/images/latte.jpg", category: "Coffee" },
-  { name: "Iced Macchiato", price: 295, image: "/images/iced-macchiato.jpg", category: "Coffee" },
-  { name: "Ristretto", price: 125, image: "/images/ristretto.webp", category: "Coffee" },
-  { name: "Turkish Coffee", price: 230, image: "/images/turkish-coffee.jpg", category: "Coffee" },
-  { name: "Dalgona", price: 210, image: "/images/dalgona.jpg", category: "Coffee" },
-  { name: "Mocha", price: 185, image: "/images/mocha.webp", category: "Coffee" },
-  { name: "Irish Coffee", price: 250, image: "/images/irish-coffee.jpg", category: "Coffee" },
-  { name: "Espresso Con Pana", price: 190, image: "/images/espresso-conpana.jpg", category: "Coffee" },
-  { name: "Affogato", price: 140, image: "/images/affogato.webp", category: "Coffee" },
+const hardcodedMenu: MenuItem[] = [
+  // Coffee
+  { _id: "hc1", name: "Cappuccino", price: 250, image: "/images/cappuccino.jpg", category: "Coffee", isAvailable: true },
+  { _id: "hc2", name: "Americano", price: 150, image: "/images/americano.jpg", category: "Coffee", isAvailable: true },
+  { _id: "hc3", name: "Espresso", price: 100, image: "/images/espresso.jpg", category: "Coffee", isAvailable: true },
+  { _id: "hc4", name: "Latte", price: 200, image: "/images/latte.jpg", category: "Coffee", isAvailable: true },
+  { _id: "hc5", name: "Iced Macchiato", price: 295, image: "/images/iced-macchiato.jpg", category: "Coffee", isAvailable: true },
+  { _id: "hc6", name: "Ristretto", price: 125, image: "/images/ristretto.webp", category: "Coffee", isAvailable: true },
+  { _id: "hc7", name: "Turkish Coffee", price: 230, image: "/images/turkish-coffee.jpg", category: "Coffee", isAvailable: true },
+  { _id: "hc8", name: "Dalgona", price: 210, image: "/images/dalgona.jpg", category: "Coffee", isAvailable: true },
+  { _id: "hc9", name: "Mocha", price: 185, image: "/images/mocha.webp", category: "Coffee", isAvailable: true },
+  { _id: "hc10", name: "Irish Coffee", price: 250, image: "/images/irish-coffee.jpg", category: "Coffee", isAvailable: true },
+  { _id: "hc11", name: "Espresso Con Pana", price: 190, image: "/images/espresso-conpana.jpg", category: "Coffee", isAvailable: true },
+  { _id: "hc12", name: "Affogato", price: 140, image: "/images/affogato.webp", category: "Coffee", isAvailable: true },
 
-  { name: "Matcha Latte", price: 300, image: "/images/matcha-latte.avif", category: "Matcha" },
-  { name: "Matcha Hot Chocolate", price: 350, image: "/images/matcha-hot-choc.jpg", category: "Matcha" },
-  { name: "Vanilla Matcha", price: 380, image: "/images/vanilla-matcha.jpg", category: "Matcha" },
-  { name: "Strawberry Matcha", price: 370, image: "/images/strawberry-matcha.png", category: "Matcha" },
-  { name: "Coconut Matcha Cloud", price: 400, image: "/images/coconut-matcha-cloud.jpg", category: "Matcha" },
-  { name: "Honey Matcha", price: 390, image: "/images/honey-matcha.jpg", category: "Matcha" },
-  { name: "Mango Matcha Latte", price: 420, image: "/images/mango-matcha-latte.webp", category: "Matcha" },
+  // Matcha
+  { _id: "hc13", name: "Matcha Latte", price: 300, image: "/images/matcha-latte.avif", category: "Matcha", isAvailable: true },
+  { _id: "hc14", name: "Matcha Hot Chocolate", price: 350, image: "/images/matcha-hot-choc.jpg", category: "Matcha", isAvailable: true },
+  { _id: "hc15", name: "Vanilla Matcha", price: 380, image: "/images/vanilla-matcha.jpg", category: "Matcha", isAvailable: true },
+  { _id: "hc16", name: "Strawberry Matcha", price: 370, image: "/images/strawberry-matcha.png", category: "Matcha", isAvailable: true },
+  { _id: "hc17", name: "Coconut Matcha Cloud", price: 400, image: "/images/coconut-matcha-cloud.jpg", category: "Matcha", isAvailable: true },
+  { _id: "hc18", name: "Honey Matcha", price: 390, image: "/images/honey-matcha.jpg", category: "Matcha", isAvailable: true },
+  { _id: "hc19", name: "Mango Matcha Latte", price: 420, image: "/images/mango-matcha-latte.webp", category: "Matcha", isAvailable: true },
 
-  { name: "Mango Smoothie", price: 255, image: "/images/mango-smoothie.png", category: "Smoothies" },
-  { name: "Kiwi Smoothie", price: 275, image: "/images/kiwi-smoothie.avif", category: "Smoothies" },
-  { name: "Apple Smoothie", price: 200, image: "/images/apple-smoothie.png", category: "Smoothies" },
-  { name: "Pineapple Smoothie", price: 250, image: "/images/pineapple-smoothie.png", category: "Smoothies" },
-  { name: "Watermelon Smoothie", price: 205, image: "/images/watermelon-smoothie.png", category: "Smoothies" },
-  { name: "Banana Smoothie", price: 195, image: "/images/banana-smoothie.webp", category: "Smoothies" },
-  { name: "Strawberry Smoothie", price: 215, image: "/images/strawberry-smoothie.png", category: "Smoothies" },
-  { name: "Blueberry Smoothie", price: 280, image: "/images/blueberry-smoothie.webp", category: "Smoothies" },
-  { name: "Cherry Smoothie", price: 290, image: "/images/cherry-smoothie.avif", category: "Smoothies" },
+  // Smoothies
+  { _id: "hc20", name: "Mango Smoothie", price: 255, image: "/images/mango-smoothie.png", category: "Smoothies", isAvailable: true },
+  { _id: "hc21", name: "Kiwi Smoothie", price: 275, image: "/images/kiwi-smoothie.avif", category: "Smoothies", isAvailable: true },
+  { _id: "hc22", name: "Apple Smoothie", price: 200, image: "/images/apple-smoothie.png", category: "Smoothies", isAvailable: true },
+  { _id: "hc23", name: "Pineapple Smoothie", price: 250, image: "/images/pineapple-smoothie.png", category: "Smoothies", isAvailable: true },
+  { _id: "hc24", name: "Watermelon Smoothie", price: 205, image: "/images/watermelon-smoothie.png", category: "Smoothies", isAvailable: true },
+  { _id: "hc25", name: "Banana Smoothie", price: 195, image: "/images/banana-smoothie.webp", category: "Smoothies", isAvailable: true },
+  { _id: "hc26", name: "Strawberry Smoothie", price: 215, image: "/images/strawberry-smoothie.png", category: "Smoothies", isAvailable: true },
+  { _id: "hc27", name: "Blueberry Smoothie", price: 280, image: "/images/blueberry-smoothie.webp", category: "Smoothies", isAvailable: true },
+  { _id: "hc28", name: "Cherry Smoothie", price: 290, image: "/images/cherry-smoothie.avif", category: "Smoothies", isAvailable: true },
 
-  { name: "Taro Bubble Tea", price: 200, image: "/images/taro-bubble.jpg", category: "Bubble Tea" },
-  { name: "Chocolate Bubble Tea", price: 200, image: "/images/chocolate-bubble.png", category: "Bubble Tea" },
-  { name: "Mango Bubble Tea", price: 200, image: "/images/mango-bubble.png", category: "Bubble Tea" },
-  { name: "Strawberry Bubble Tea", price: 200, image: "/images/strawberry-bubble.png", category: "Bubble Tea" },
-  { name: "HoneyDew Bubble Tea", price: 200, image: "/images/honeydew-bubble.jpg", category: "Bubble Tea" },
-  { name: "Coconut Bubble Tea", price: 200, image: "/images/coconut-bubble.webp", category: "Bubble Tea" },
-  { name: "Matcha Bubble Tea", price: 200, image: "/images/matcha-bubble.jpg", category: "Bubble Tea" },
+  // Bubble Tea
+  { _id: "hc29", name: "Taro Bubble Tea", price: 200, image: "/images/taro-bubble.jpg", category: "Bubble Tea", isAvailable: true },
+  { _id: "hc30", name: "Chocolate Bubble Tea", price: 200, image: "/images/chocolate-bubble.png", category: "Bubble Tea", isAvailable: true },
+  { _id: "hc31", name: "Mango Bubble Tea", price: 200, image: "/images/mango-bubble.png", category: "Bubble Tea", isAvailable: true },
+  { _id: "hc32", name: "Strawberry Bubble Tea", price: 200, image: "/images/strawberry-bubble.png", category: "Bubble Tea", isAvailable: true },
+  { _id: "hc33", name: "HoneyDew Bubble Tea", price: 200, image: "/images/honeydew-bubble.jpg", category: "Bubble Tea", isAvailable: true },
+  { _id: "hc34", name: "Coconut Bubble Tea", price: 200, image: "/images/coconut-bubble.webp", category: "Bubble Tea", isAvailable: true },
+  { _id: "hc35", name: "Matcha Bubble Tea", price: 200, image: "/images/matcha-bubble.jpg", category: "Bubble Tea", isAvailable: true },
 
-  { name: "Black Tea", price: 60, image: "/images/blacktea.jpg", category: "Tea" },
-  { name: "Chamomile Tea", price: 100, image: "/images/chamomiletea.avif", category: "Tea" },
-  { name: "Ginger Tea", price: 95, image: "/images/gingertea.webp", category: "Tea" },
-  { name: "Green Tea", price: 70, image: "/images/greentea.png", category: "Tea" },
-  { name: "Hibiscus Tea", price: 100, image: "/images/hibiscustea.jpg", category: "Tea" },
-  { name: "Lemon Tea", price: 65, image: "/images/lemontea.jpg", category: "Tea" },
-  { name: "Spearmint Tea", price: 110, image: "/images/spearminttea.jpg", category: "Tea" },
-  { name: "Milk Tea", price: 65, image: "/images/milktea.jpg", category: "Tea" },
+  // Tea
+  { _id: "hc36", name: "Black Tea", price: 60, image: "/images/blacktea.jpg", category: "Tea", isAvailable: true },
+  { _id: "hc37", name: "Chamomile Tea", price: 100, image: "/images/chamomiletea.avif", category: "Tea", isAvailable: true },
+  { _id: "hc38", name: "Ginger Tea", price: 95, image: "/images/gingertea.webp", category: "Tea", isAvailable: true },
+  { _id: "hc39", name: "Green Tea", price: 70, image: "/images/greentea.png", category: "Tea", isAvailable: true },
+  { _id: "hc40", name: "Hibiscus Tea", price: 100, image: "/images/hibiscustea.jpg", category: "Tea", isAvailable: true },
+  { _id: "hc41", name: "Lemon Tea", price: 65, image: "/images/lemontea.jpg", category: "Tea", isAvailable: true },
+  { _id: "hc42", name: "Spearmint Tea", price: 110, image: "/images/spearminttea.jpg", category: "Tea", isAvailable: true },
+  { _id: "hc43", name: "Milk Tea", price: 65, image: "/images/milktea.jpg", category: "Tea", isAvailable: true },
 ];
 
 interface UserData {
@@ -86,13 +91,18 @@ export default function DashboardPage() {
   const [customizingDrink, setCustomizingDrink] = useState<MenuItem | null>(null);
   const [showCart, setShowCart] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const { cart, addToCart, removeFromCart, updateQuantity } = useCart();
+  const [fetchedMenu, setFetchedMenu] = useState<MenuItem[]>([]);
 
+  const { cart, addToCart, removeFromCart, updateQuantity } = useCart();
   const router = useRouter();
 
   const toggleCart = () => setShowCart(prev => !prev);
+  const allMenuItems = [...hardcodedMenu, ...fetchedMenu];
 
- const handleAddToCart = (drink: MenuItem, options?: Partial<CartItem>) => {
+  // Only show available drinks
+const availableMenuItems = allMenuItems.filter(item => item.isAvailable !== false);
+
+  const handleAddToCart = (drink: MenuItem, options?: Partial<CartItem>) => {
     const cartItem: CartItem = {
       name: drink.name,
       price: drink.price,
@@ -107,6 +117,7 @@ export default function DashboardPage() {
     setCustomizingDrink(null);
   };
 
+  // Fetch user info
   useEffect(() => {
     const fetchUser = async () => {
       const token = getAuthToken();
@@ -121,15 +132,37 @@ export default function DashboardPage() {
         console.error("Failed to fetch user:", err);
       }
     };
-
     fetchUser();
   }, []);
 
-  // Filter menu items based on category and search
-  const filteredMenuItems = menuItems.filter(item => {
-    return item.category === activeCategory &&
-           item.name.toLowerCase().includes(searchTerm.toLowerCase());
-  });
+  // Fetch menu from backend and merge with hardcoded
+  useEffect(() => {
+  const fetchMenu = async () => {
+    try {
+      const res = await axios.get("http://localhost:5050/api/menu"); 
+      const backendMenu: MenuItem[] = res.data.data.map((item: any) => ({
+        _id: item._id,
+        name: item.name,
+        price: item.price,
+        image: `http://localhost:5050${item.image}`, 
+        category: item.category,
+        isAvailable: item.isAvailable ?? true,
+      }));
+      setFetchedMenu(backendMenu);
+    } catch (err) {
+      console.error("Failed to fetch menu:", err);
+    }
+  };
+
+  fetchMenu();
+}, []);
+
+  // Filter menu items by category and search term
+ const filteredMenuItems = allMenuItems.filter(item => 
+  (item.isAvailable ?? true) &&
+  item.category === activeCategory &&
+  item.name.toLowerCase().includes(searchTerm.toLowerCase())
+);
 
   return (
     <div className="min-h-screen flex bg-[#8A7356]">
@@ -154,7 +187,7 @@ export default function DashboardPage() {
           <button onClick={toggleCart} className="text-3xl">🛒</button>
         </div>
 
-         {/* Search Bar */}
+        {/* Search Bar */}
         <div className="mb-8 flex justify-end-safe">
           <div className="flex items-center bg-[#FAF5EE] rounded-full px-6 py-2 w-full md:w-70 text-black">
             <input
@@ -164,7 +197,7 @@ export default function DashboardPage() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <button className="ml-2" onClick={() => { }}>🔍</button>
+            <button className="ml-2">🔍</button>
           </div>
         </div>
 
@@ -183,22 +216,32 @@ export default function DashboardPage() {
           ))}
         </div>
 
-         {/* Menu Items */}
+        {/* Menu Items */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 flex-1">
           {filteredMenuItems.map(item => (
-          <div
-            key={item.name}
-            className="bg-[#FFFFFF] text-black rounded-2xl p-4 flex flex-col items-center"
-          >
-            <img src={item.image} alt={item.name} className="w-36 h-32 object-cover mb-2 rounded-xl" />
-            <h3 className="font-semibold text-lg">{item.name}</h3>
-            <p className="mb-2">Rs. {item.price}</p>
-            <button
-              className="bg-[#4B2E2B] text-white px-4 py-1 rounded-full"
-              onClick={() => setCustomizingDrink(item)}
-            >
+            <div
+              key={item._id || item.name + item.price}
+                className={`bg-[#FFFFFF] text-black rounded-2xl p-4 flex flex-col items-center ${
+                  (item.isAvailable ?? true) === false ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+                <img
+                  src={item.image.startsWith("http") ? item.image : item.image}
+                  alt={item.name}
+                  className="w-36 h-32 object-cover mb-2 rounded-xl"
+                />
+                <h3 className="font-semibold text-lg">{item.name}</h3>
+                <p className="mb-2">Rs. {item.price}</p>
+                {(item.isAvailable ?? true) === false ? (
+                  <span className="text-red-600 font-bold">Out of Stock</span>
+                ) : (
+                  <button
+                    className="bg-[#4B2E2B] text-white px-4 py-1 rounded-full"
+                    onClick={() => setCustomizingDrink(item)}
+              >
                 +
               </button>
+                )}
             </div>
           ))}
         </div>
@@ -239,29 +282,24 @@ export default function DashboardPage() {
               </div>
 
               <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => {
-                    if (item.quantity > 1) {
-                      updateQuantity(index, item.quantity - 1);
-                    }
-                  }}
-                  className="px-2 py-1 bg-gray-200 rounded-full hover:bg-gray-300"
-                >-</button>
+                      <button
+                        onClick={() => updateQuantity(index, item.quantity - 1)}
+                        className="px-2 py-1 bg-gray-200 rounded-full hover:bg-gray-300"
+                        disabled={item.quantity <= 1}
+                      >-</button>
+                      <span className="w-5 text-center">{item.quantity}</span>
+                      <button
+                        onClick={() => updateQuantity(index, item.quantity + 1)}
+                        className="px-2 py-1 bg-gray-200 rounded-full hover:bg-gray-300"
+                      >+</button>
+                    </div>
 
-                <span className="w-5 text-center">{item.quantity}</span>
-
-                <button
-                   onClick={() => updateQuantity(index, item.quantity + 1)}
-                  className="px-2 py-1 bg-gray-200 rounded-full hover:bg-gray-300"
-                >+</button>
-              </div>
-
-              <button
-                onClick={() => removeFromCart(index)}
-                className="text-red-500 hover:text-red-700 text-xl ml-2"
-              >
-                🗑
-              </button>
+                    <button
+                      onClick={() => removeFromCart(index)}
+                      className="text-red-500 hover:text-red-700 text-xl ml-2"
+                    >
+                      🗑
+                    </button>
 
               <p className="font-semibold text-[#4B2E2B] ml-2">Rs. {item.price * item.quantity}</p>
             </div>

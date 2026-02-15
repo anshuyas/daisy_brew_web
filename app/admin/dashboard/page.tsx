@@ -7,7 +7,7 @@ export default function AdminDashboardPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   return (
-    <div className="flex min-h-screen bg-[#f5efe6] text-[#3c2825]">
+    <div className="flex min-h-screen bg-[#f7f2ed] text-[#3c2825]">
       
       {/* Sidebar */}
       {/* Sidebar */}
@@ -27,7 +27,12 @@ export default function AdminDashboardPage() {
       >
         Manage Users
       </Link>
-      {/* Add more admin links here */}
+    <Link
+      href="/admin/menu"
+      className="px-3 py-2 rounded-md hover:bg-[#bfa77f] hover:text-white font-semibold"
+    >
+      Manage Menu
+    </Link>
     </nav>
   </div>
 
@@ -64,18 +69,21 @@ export default function AdminDashboardPage() {
               <p className="text-sm text-[#3c2825]">View and manage all registered users.</p>
               <Link
                 href="/admin/users"
-                className="mt-3 inline-block text-sm text-[#fff] bg-[#3c2825] px-4 py-2 rounded hover:opacity-90"
+                className="mt-3 inline-block text-sm text-white bg-[#3c2825] px-4 py-2 rounded hover:opacity-90"
               >
                 Manage Users
               </Link>
             </div>
 
             <div className="p-6 bg-[#c2b5a4] rounded-xl shadow hover:shadow-lg transition cursor-pointer">
-              <h2 className="text-xl font-semibold mb-2">Reports</h2>
-              <p className="text-sm text-[#3c2825]">View system reports and analytics.</p>
-              <button className="mt-3 text-sm text-[#fff] bg-[#3c2825] px-4 py-2 rounded hover:opacity-90">
-                View Reports
-              </button>
+              <h2 className="text-xl font-semibold mb-2">Menu</h2>
+              <p className="text-sm text-[#3c2825]">Add, update and delete menu items.</p>
+               <Link
+                href="/admin/menu"
+                className="mt-3 inline-block text-sm text-white bg-[#3c2825] px-4 py-2 rounded hover:opacity-90"
+              >
+                Manage Menu
+              </Link>
             </div>
           </div>
         </div>
