@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import AdminPageWrapper from "./AdminPageWrapper";
 
 export default function AdminLayout({
   children,
@@ -26,6 +27,7 @@ export default function AdminLayout({
   };
 
   return (
+    <AdminPageWrapper>
     <div className="flex min-h-screen bg-[#f7f2ed] text-[#3c2825]">
       
       {/* Sidebar */}
@@ -80,5 +82,6 @@ export default function AdminLayout({
         {children}
       </main>
     </div>
+    </AdminPageWrapper>
   );
 }

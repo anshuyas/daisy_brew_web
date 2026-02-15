@@ -57,7 +57,7 @@ export default function AdminSettingsPage() {
         setLoading(false);
       } catch (error) {
         console.error(error);
-        router.push("/admin/login");
+        router.push("/login");
       }
     };
 
