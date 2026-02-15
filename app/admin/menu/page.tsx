@@ -151,7 +151,10 @@ export default function AdminMenuPage() {
   if (loading) return <p className="p-8">Loading...</p>;
 
   return (
-    <div className="min-h-screen bg-[#fff5eb] p-8">
+    <div className="min-h-screen bg-[#f7f2ed] p-6">
+      <div className="max-w-6xl mx-auto bg-[#fffaf3] rounded-2xl shadow-lg border border-[#e0d5c8] p-6">
+        {/* Header */}
+    <div className="min-h-screen p-8">
       <h1 className="text-3xl text-[#3c2825] text-center font-bold mb-4">Menu Management</h1>
 
       <div className="flex justify-between mb-4">
@@ -290,6 +293,8 @@ export default function AdminMenuPage() {
           </div>
         </div>
       )}
+    </div>
+    </div>
     </div>
   );
 }
