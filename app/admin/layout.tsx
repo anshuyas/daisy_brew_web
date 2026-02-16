@@ -60,6 +60,10 @@ export default function AdminLayout({
                Orders
             </Link>
 
+            <Link href="/admin/reports" className={linkClasses("/admin/reports")}>
+               Reports
+            </Link>
+
             <Link href="/admin/settings" className={linkClasses("/admin/settings")}>
               Settings
             </Link>
