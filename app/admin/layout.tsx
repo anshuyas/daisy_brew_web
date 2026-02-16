@@ -52,6 +52,14 @@ export default function AdminLayout({
               Manage Menu
             </Link>
 
+            <Link href="/admin/notifications" className={linkClasses("/admin/notifications")}>
+                Notifications
+            </Link>
+
+            <Link href="/admin/orders" className={linkClasses("/admin/orders")}>
+               Orders
+            </Link>
+
             <Link href="/admin/settings" className={linkClasses("/admin/settings")}>
               Settings
             </Link>

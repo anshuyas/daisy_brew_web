@@ -7,20 +7,23 @@ export default function NotificationsPage() {
   const { notifications, toggleRead, unreadCount } = useNotification();
 
   // Group notifications by date
-  const grouped = notifications.reduce((acc: Record<string, typeof notifications>, notif) => {
-    const notifDate = dayjs(notif.createdAt).startOf("day");
-    const today = dayjs().startOf("day");
-    const yesterday = dayjs().subtract(1, "day").startOf("day");
+  const grouped = notifications.reduce(
+    (acc: Record<string, typeof notifications>, notif) => {
+      const notifDate = dayjs(notif.createdAt).startOf("day");
+      const today = dayjs().startOf("day");
+      const yesterday = dayjs().subtract(1, "day").startOf("day");
 
-    const key = notifDate.isSame(today)
-      ? "Today"
-      : notifDate.isSame(yesterday)
-      ? "Yesterday"
-      : "Earlier";
+      const key = notifDate.isSame(today)
+        ? "Today"
+        : notifDate.isSame(yesterday)
+        ? "Yesterday"
+        : "Earlier";
 
-    acc[key] = acc[key] ? [...acc[key], notif] : [notif];
-    return acc;
-  }, {} as Record<string, typeof notifications>);
+      acc[key] = acc[key] ? [...acc[key], notif] : [notif];
+      return acc;
+    },
+    {} as Record<string, typeof notifications>
+  );
 
   return (
     <div className="min-h-screen bg-linear-to-br from-[#FDEBD0] via-[#F5E0C3] to-[#F2D9B3] p-6">

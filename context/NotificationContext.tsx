@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 export interface Notification {
   _id: string;
@@ -16,6 +17,7 @@ interface NotificationContextType {
   markAsRead: (id: string) => Promise<void>;
   toggleRead: (id: string) => Promise<void>;
   unreadCount: number;
+  refreshNotifications: () => Promise<void>;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -29,32 +31,36 @@ export const useNotification = () => {
 export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  // Fetch notifications from backend on mount
+  // Get token from cookies
+  const getToken = () => Cookies.get("auth_token");
+
+  const fetchNotifications = async () => {
+    const token = getToken();
+    if (!token) return;
+
+    try {
+      const res = await axios.get("http://localhost:5050/api/notifications", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (Array.isArray(res.data)) setNotifications(res.data);
+    } catch (err) {
+      console.error("Failed to fetch notifications:", err);
+    }
+  };
+
+  // Fetch on mount and poll for updates
   useEffect(() => {
-    const fetchNotifications = async () => {
-      const token = localStorage.getItem("auth_token");
-      if (!token) return;
-
-      try {
-        const res = await axios.get("http://localhost:5050/api/notifications", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (Array.isArray(res.data)) setNotifications(res.data);
-      } catch (err) {
-        console.error("Failed to fetch notifications:", err);
-      }
-    };
-
     fetchNotifications();
+    const interval = setInterval(fetchNotifications, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   const addNotification = (notif: Notification) => {
     setNotifications(prev => [notif, ...prev]);
   };
 
-  // Mark as read
   const markAsRead = async (id: string) => {
-    const token = localStorage.getItem("auth_token");
+    const token = getToken();
     if (!token) return;
 
     try {
@@ -74,14 +80,21 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const toggleRead = async (id: string) => {
     const notif = notifications.find(n => n._id === id);
     if (!notif) return;
-    if (!notif.read) await markAsRead(id);  
-};
+    if (!notif.read) await markAsRead(id);
+  };
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
     <NotificationContext.Provider
-      value={{ notifications, addNotification, markAsRead, toggleRead, unreadCount }}
+      value={{
+        notifications,
+        addNotification,
+        markAsRead,
+        toggleRead,
+        unreadCount,
+        refreshNotifications: fetchNotifications,
+      }}
     >
       {children}
     </NotificationContext.Provider>
