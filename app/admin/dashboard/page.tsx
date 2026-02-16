@@ -31,7 +31,33 @@ export default function AdminDashboardPage() {
                 Manage Menu
               </Link>
               </div>
-              </div>
+
+               <div className="p-6 bg-[#c2b5a4] rounded-xl shadow hover:shadow-lg transition">
+          <h2 className="text-xl font-semibold mb-2">Orders</h2>
+          <p className="text-sm text-[#3c2825]">
+            View and manage customer orders.
+          </p>
+          <Link
+            href="/admin/orders"
+            className="mt-3 inline-block text-sm text-white bg-[#3c2825] px-4 py-2 rounded hover:opacity-90"
+          >
+            Manage Orders
+          </Link>
+        </div>
+
+        <div className="p-6 bg-[#c2b5a4] rounded-xl shadow hover:shadow-lg transition">
+          <h2 className="text-xl font-semibold mb-2">Reports</h2>
+          <p className="text-sm text-[#3c2825]">
+            View revenue analytics and sales reports.
+          </p>
+          <Link
+            href="/admin/reports"
+            className="mt-3 inline-block text-sm text-white bg-[#3c2825] px-4 py-2 rounded hover:opacity-90"
+          >
+            View Reports
+          </Link>
+        </div>
+    </div>
     </div>
   );
 }

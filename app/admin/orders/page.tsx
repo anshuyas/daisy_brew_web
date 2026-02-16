@@ -60,7 +60,7 @@ export default function AdminOrdersPage() {
   return (
     <div className="min-h-screen bg-[#f7f2ed] p-8">
       <div className="max-w-6xl mx-auto bg-[#fffaf3] p-6 rounded-2xl shadow-lg">
-        <h1 className="text-3xl font-bold mb-6 text-[#4B2E2B]">
+        <h1 className="text-3xl text-center font-bold mb-6 text-[#4B2E2B]">
           Orders Management
         </h1>
 
