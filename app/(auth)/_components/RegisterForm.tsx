@@ -41,7 +41,6 @@ export default function RegisterForm() {
         <input
           id="name"
           type="text"
-          placeholder="Keifer Watson"
           className="h-10 w-full rounded-md border px-3 text-sm outline-none focus:border-brown-700"
           {...register("fullName")}
         />
@@ -53,7 +52,6 @@ export default function RegisterForm() {
         <input
           id="email"
           type="email"
-          placeholder="keif@example.com"
           className="h-10 w-full rounded-md border px-3 text-sm outline-none focus:border-brown-700"
           {...register("email")}
         />
@@ -65,7 +63,6 @@ export default function RegisterForm() {
         <input
           id="password"
           type="password"
-          placeholder="••••••"
           className="h-10 w-full rounded-md border px-3 text-sm outline-none focus:border-brown-700"
           {...register("password")}
         />
@@ -77,7 +74,6 @@ export default function RegisterForm() {
         <input
           id="confirmPassword"
           type="password"
-          placeholder="••••••"
           className="h-10 w-full rounded-md border px-3 text-sm outline-none focus:border-brown-700"
           {...register("confirmPassword")}
         />

@@ -3,6 +3,7 @@
 import { CartItem } from "@/types/drink";
 import { useState } from "react";
 import { MenuItem } from "@/types/menu";
+import { useRouter } from "next/navigation";
 
 interface DrinkOption {
   quantity: number;
@@ -19,12 +20,15 @@ interface DrinkCustomizerProps {
 }
 
 export default function DrinkCustomizer({ drink, onClose, onAddToCart }: DrinkCustomizerProps) {
+  const router = useRouter();
+
   // State
   const [quantity, setQuantity] = useState(1);
-  const [size, setSize] = useState<DrinkOption["size"]>("Medium");
+  const [size, setSize] = useState<DrinkOption["size"]>("Small");
   const [temperature, setTemperature] = useState<DrinkOption["temperature"]>("Hot");
-  const [sugar, setSugar] = useState<DrinkOption["sugar"]>("Normal");
+  const [sugar, setSugar] = useState<DrinkOption["sugar"]>("No Sugar");
   const [milk, setMilk] = useState<DrinkOption["milk"]>("None");
+  const [addedMessage, setAddedMessage] = useState(false);
 
   // Handlers
   const handleQuantity = (change: number) => {
@@ -41,9 +45,29 @@ export default function DrinkCustomizer({ drink, onClose, onAddToCart }: DrinkCu
   };
 
   const handleAddToCart = () => {
-    onAddToCart({ name: drink.name, price: drink.price, image: drink.image, quantity, size, temperature, sugar, milk });
+     onAddToCart({ name: drink.name, price: drink.price, image: drink.image, quantity, size, temperature, sugar, milk });
+    setAddedMessage(true);
+    // Hide message after 2 seconds
+    setTimeout(() => {setAddedMessage(false);
     onClose();
+   }, 2000);
   };
+
+  const handleBuyNow = () => {
+    const selectedDrink: CartItem = {
+        name: drink.name,
+        price: drink.price,
+        image: drink.image,
+        quantity,
+        size,
+        temperature,
+        sugar,
+        milk,
+      };
+    const queryString = encodeURIComponent(JSON.stringify(selectedDrink));
+
+  router.push(`/user/checkout?item=${queryString}`);
+};
 
   const themeColorMap: Record<string, string> = {
   Coffee: "bg-[#4B2E2B]",      
@@ -163,13 +187,21 @@ const themeColor = themeColorMap[drink.category] || "bg-gray-600";
             Add to Cart
           </button>
           <button
-            onClick={() => alert("Buy Now")}
+            onClick={handleBuyNow}
             className={`flex-1 px-4 py-2 ${themeColor} text-white rounded-xl`}
           >
             Buy Now
           </button>
         </div>
+
+        {/* Added message */}
+        {addedMessage && (
+          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 px-4 py-2 bg-green-500 text-white rounded-lg shadow-lg">
+            Added to cart
+          </div>
+        )}
       </div>
     </div>
   );
 }
+

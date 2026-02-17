@@ -102,7 +102,7 @@ export default function DashboardPage() {
   // Only show available drinks
 const availableMenuItems = allMenuItems.filter(item => item.isAvailable !== false);
 
-  const handleAddToCart = (drink: MenuItem, options?: Partial<CartItem>) => {
+  const handleAddToCart = (drink: MenuItem, options?: Partial<CartItem>, closeAfterMs = 2000) => {
     const cartItem: CartItem = {
       name: drink.name,
       price: drink.price,
@@ -114,7 +114,10 @@ const availableMenuItems = allMenuItems.filter(item => item.isAvailable !== fals
       milk: options?.milk || "None",
     };
     addToCart(cartItem);
-    setCustomizingDrink(null);
+    
+    if (closeAfterMs) {
+    setTimeout(() => setCustomizingDrink(null), closeAfterMs);
+  }
   };
 
   // Fetch user info

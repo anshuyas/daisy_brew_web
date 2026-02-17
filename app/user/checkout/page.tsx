@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
 import { getAuthToken } from "@/lib/cookie";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useNotification } from "@/context/NotificationContext";
 import toast from "react-hot-toast";
 
@@ -15,9 +15,21 @@ interface UserData {
   address?: string;
 }
 
+interface CartItem {
+  name: string;
+  price: number;
+  image: string;
+  quantity: number;
+  size?: string;
+  temperature?: string;
+  sugar?: string;
+  milk?: string;
+}
+
 export default function CheckoutPage() {
   const router = useRouter();
-  const { cart } = useCart();
+  const searchParams = useSearchParams();
+  const { cart: cartContext } = useCart();
   const { addNotification } = useNotification();
 
   const [user, setUser] = useState<UserData>({});
@@ -28,12 +40,16 @@ export default function CheckoutPage() {
   const [isClient, setIsClient] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // For Buy Now single item
+  const [buyNowItem, setBuyNowItem] = useState<CartItem | null>(null);
+
   useEffect(() => setIsClient(true), []);
 
   useEffect(() => {
+    const token = getAuthToken();
+    if (!token) return;
+
     const fetchUser = async () => {
-      const token = getAuthToken();
-      if (!token) return;
       try {
         const res = await axios.get("http://localhost:5050/api/user/me", {
           headers: { Authorization: `Bearer ${token}` },
@@ -43,8 +59,24 @@ export default function CheckoutPage() {
         console.error("Failed to fetch user:", err);
       }
     };
+
     fetchUser();
   }, []);
+
+  // Parse "Buy Now" item from query
+  useEffect(() => {
+    const itemParam = searchParams.get("item");
+    if (itemParam) {
+      try {
+        const parsed: CartItem = JSON.parse(decodeURIComponent(itemParam));
+        setBuyNowItem(parsed);
+      } catch (err) {
+        console.error("Failed to parse Buy Now item:", err);
+      }
+    }
+  }, [searchParams]);
+
+  const checkoutItems = buyNowItem ? [buyNowItem] : cartContext;
 
   const handleConfirmOrder = async () => {
     const token = getAuthToken();
@@ -52,7 +84,8 @@ export default function CheckoutPage() {
       toast.error("Please login first");
       return;
     }
-    if (!cart || cart.length === 0) {
+
+    if (!checkoutItems || checkoutItems.length === 0) {
       toast.error("Your cart is empty");
       return;
     }
@@ -60,16 +93,17 @@ export default function CheckoutPage() {
     setIsSubmitting(true);
 
     try {
-      // Place order
       const orderData = {
-        items: cart.map(item => ({
+        items: checkoutItems.map(item => ({
           name: item.name,
           quantity: item.quantity,
           price: item.price,
           size: item.size || undefined,
           temperature: item.temperature || undefined,
+          sugar: item.sugar || undefined,
+          milk: item.milk || undefined,
         })),
-        total: cart.reduce((acc, item) => acc + item.price * item.quantity, 0),
+        total: checkoutItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
         deliveryOption,
         timeOption,
         scheduledTime: timeOption === "later" && scheduledTime ? new Date(scheduledTime) : null,
@@ -90,24 +124,20 @@ export default function CheckoutPage() {
 
       const orderIdShort = resOrder.data._id.slice(-6);
 
+      // Create notification
       const resNotif = await axios.post(
         "http://localhost:5050/api/notifications",
         { message: `Your order #${orderIdShort} is confirmed` },
         { headers: { Authorization: `Bearer ${token}` } }
-        );
-        
-       // Save notification via context 
+      );
+
       addNotification(resNotif.data);
 
-      // Show toast
       toast.success(`Your order #${orderIdShort} is confirmed!`);
 
-      // Clear cart
-      localStorage.removeItem("cart");
+      if (!buyNowItem) localStorage.removeItem("cart");
 
-      // Redirect to dashboard
       router.push("/dashboard");
-
     } catch (error: any) {
       console.error("Order failed:", error.response?.data || error.message);
       toast.error("Failed to place order: " + (error.response?.data?.message || error.message));
@@ -174,12 +204,12 @@ export default function CheckoutPage() {
           </div>
         </div>
 
-        {/* RIGHT: Cart Summary */}
+        {/* RIGHT: Cart / Buy Now Summary */}
         <div className="space-y-6">
           <div className="bg-white rounded-3xl shadow-lg p-6 space-y-4">
             <h2 className="text-2xl font-semibold text-[#4B2E2B]">Your Order</h2>
             <div className="space-y-2 max-h-96 overflow-y-auto">
-              {cart.map((item, i) => (
+              {checkoutItems.map((item, i) => (
                 <div key={i} className="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
                   <div className="flex items-center space-x-3">
                     <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded-lg" />
@@ -194,7 +224,7 @@ export default function CheckoutPage() {
             </div>
             <div className="flex justify-between mt-4 font-bold text-xl">
               <span>Total</span>
-              <span>Rs. {cart.reduce((acc, item) => acc + item.price * item.quantity, 0)}</span>
+              <span>Rs. {checkoutItems.reduce((acc, item) => acc + item.price * item.quantity, 0)}</span>
             </div>
             <button
               disabled={isSubmitting}
