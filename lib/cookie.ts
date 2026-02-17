@@ -16,29 +16,40 @@ export interface UserData {
 //client side
 
 export const setAuthToken = (token: string) => {
-  Cookies.set("auth_token", token, {
-    expires: 7,
-    sameSite: "lax",
-  });
+  if (typeof window !== "undefined") {
+    // Store in localStorage (for axios client)
+    localStorage.setItem("auth_token", token);
+
+    // ALSO store in cookie (for server actions)
+    document.cookie = `auth_token=${token}; path=/; max-age=${
+      7 * 24 * 60 * 60
+    }; samesite=lax`;
+  }
 };
 
-export const getAuthToken = () => {
-  return Cookies.get("auth_token") || null;
+export const getAuthToken = (): string | null => {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("auth_token");
 };
 
 export const setUserData = (userData: UserData) => {
-  Cookies.set("user_data", JSON.stringify(userData), {
-    expires: 7,
-    sameSite: "lax",
-  });
+  if (typeof window !== "undefined") {
+    document.cookie = `user_data=${encodeURIComponent(
+      JSON.stringify(userData)
+    )}; path=/; max-age=${7 * 24 * 60 * 60}; samesite=lax`;
+  }
 };
 
 export const getUserData = (): UserData | null => {
-  const data = Cookies.get("user_data");
-  return data ? JSON.parse(data) : null;
+  if (typeof window === "undefined") return null;
+  const match = document.cookie.match(new RegExp('(^| )user_data=([^;]+)'));
+  return match ? JSON.parse(decodeURIComponent(match[2])) : null;
 };
 
 export const clearAuthCookies = () => {
-  Cookies.remove("auth_token");
-  Cookies.remove("user_data");
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("auth_token");
+    document.cookie = "auth_token=; path=/; max-age=0";
+    document.cookie = "user_data=; path=/; max-age=0";
+  }
 };

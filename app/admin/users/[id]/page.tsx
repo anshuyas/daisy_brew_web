@@ -25,7 +25,7 @@ export default function UserDetailPage() {
 
     const fetchUser = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("auth_token");
 
         if (!token) {
           setError("Unauthorized. Please login again.");

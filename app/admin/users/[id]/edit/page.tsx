@@ -20,7 +20,7 @@ export default function EditUserPage() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("auth_token");
         if (!token) {
           setError("Unauthorized");
           return;
@@ -60,7 +60,7 @@ export default function EditUserPage() {
     setError("");
     setSaving(true);
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("auth_token");
     if (!token) {
       setError("Unauthorized");
       setSaving(false);

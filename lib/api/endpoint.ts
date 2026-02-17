@@ -5,14 +5,14 @@ export const API = {
   },
   ADMIN: {
     USER: {
-      CREATE: '/api/admin/users',
-      GET_ALL: '/api/admin/users',
-      GET_BY_ID: (id: string) => `/api/admin/users/${id}`,
-      UPDATE: (id: string) => `/api/admin/users/${id}`,
-      DELETE: (id: string) => `/api/admin/users/${id}`,
+      CREATE: '/admin/users',
+      GET_ALL: '/admin/users',
+      GET_BY_ID: (id: string) => `/admin/users/${id}`,
+      UPDATE: (id: string) => `/admin/users/${id}`,
+      DELETE: (id: string) => `/admin/users/${id}`,
     },
   },
   USER: {
-    UPDATE: (id: string) => `/api/user/${id}`, 
+    UPDATE: (id: string) => `/user/${id}`, 
   },
 }
