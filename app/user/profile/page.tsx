@@ -84,10 +84,8 @@ export default function UserProfileSection() {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#F2D9B3] p-10">
-      {/* Sidebar */}
-      <div className="w-85 bg-white rounded-3xl shadow-xl p-8 flex flex-col items-center space-y-4">
-        {/* Profile Image */}
+<div className="min-h-screen flex bg-[#F2D9B3] dark:bg-[#1E1412] dark:text-white p-10">    
+<div className="w-85 bg-white dark:bg-gray-900 rounded-3xl shadow-xl p-8 transition-colors duration-300">       
         <label htmlFor="profileImage" className="cursor-pointer relative group">
           {preview ? (
             <img
@@ -113,8 +111,8 @@ export default function UserProfileSection() {
         />
 
         {/* Fullname & Email */}
-        <h2 className="text-xl font-bold text-[#3c2825]">{fullName}</h2>
-        <p className="text-gray-500 text-sm">{email}</p>
+        <h2 className="text-xl font-bold text-[#3c2825] dark:text-white">{fullName}</h2>
+        <p className="text-gray-500 dark:text-gray-400">{email}</p>
 
         {/* Menu */}
         <div className="w-full mt-6 space-y-2">
@@ -158,8 +156,7 @@ export default function UserProfileSection() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 ml-12 bg-white rounded-3xl shadow-xl p-10 transition-all duration-300">
-        {activeTab === "profile" && (
+<div className="flex-1 ml-12 bg-white dark:bg-gray-900 rounded-3xl shadow-xl p-10 transition-colors duration-300">        {activeTab === "profile" && (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold text-[#3c2825]">Edit Profile</h2>
             {message && (

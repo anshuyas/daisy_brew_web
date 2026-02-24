@@ -254,7 +254,6 @@ setAnimationFinished(false);
         />
       </div>
 
-      {/* Message + Button appear AFTER animation */}
       {animationFinished && (
         <div className="mt-4 animate-fadeIn">
           <h2 className="text-2xl font-bold text-[#141111]">
