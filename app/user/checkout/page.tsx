@@ -7,6 +7,8 @@ import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useNotification } from "@/context/NotificationContext";
 import toast from "react-hot-toast";
+import Lottie from "lottie-react";
+import coffeeAnimation from "@/public/animations/coffee_success.json";
 
 interface UserData {
   fullName?: string;
@@ -39,6 +41,8 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("cod");
   const [isClient, setIsClient] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [animationFinished, setAnimationFinished] = useState(false);
 
   // For Buy Now single item
   const [buyNowItem, setBuyNowItem] = useState<CartItem | null>(null);
@@ -137,7 +141,8 @@ export default function CheckoutPage() {
 
       if (!buyNowItem) localStorage.removeItem("cart");
 
-      router.push("/dashboard");
+setShowSuccess(true);
+setAnimationFinished(false);
     } catch (error: any) {
       console.error("Order failed:", error.response?.data || error.message);
       toast.error("Failed to place order: " + (error.response?.data?.message || error.message));
@@ -236,6 +241,40 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
+      {showSuccess && (
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="bg-[#d6c3a3] rounded-3xl p-8 text-center shadow-2xl w-[90%] max-w-md">
+
+      {/* Coffee Animation */}
+      <div className="w-56 mx-auto">
+        <Lottie
+          animationData={coffeeAnimation}
+          loop={false}
+          onComplete={() => setAnimationFinished(true)}
+        />
+      </div>
+
+      {/* Message + Button appear AFTER animation */}
+      {animationFinished && (
+        <div className="mt-4 animate-fadeIn">
+          <h2 className="text-2xl font-bold text-[#141111]">
+            Your order has been placed!
+          </h2>
+
+          <button
+            onClick={() => {
+              setShowSuccess(false);
+              router.push("/dashboard");
+            }}
+            className="mt-6 px-8 py-3 bg-[#f3eceed5] text-black font-semibold rounded-full hover:bg-[#6B4F4B] transition"
+          >
+            OK
+          </button>
+        </div>
+      )}
+    </div>
+  </div>
+)}
     </div>
   );
 }
