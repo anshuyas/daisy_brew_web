@@ -7,6 +7,7 @@ import Link from "next/link";
 interface User {
   _id: string;
   email: string;
+  fullName: string; 
   role: "user" | "admin";
   createdAt: string;
   image?: string | null;
@@ -31,6 +32,14 @@ export default function UserDetailPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const [editEmail, setEditEmail] = useState("");
+  const [editfullName, setEditFullName] = useState("");
+  const [editRole, setEditRole] = useState<"user" | "admin">("user");
+  const [editSaving, setEditSaving] = useState(false);
+  const [editError, setEditError] = useState("");
+  const [editMessage, setEditMessage] = useState("");
+  const [isEditOpen, setIsEditOpen] = useState(false);
 
   const totalPages = Math.ceil(orders.length / ORDERS_PER_PAGE);
 
@@ -100,10 +109,72 @@ export default function UserDetailPage() {
     fetchOrders();
   }, [user, id]);
 
-  const handlePageChange = (page: number) => {
+   const handlePageChange = (page: number) => {
     if (page < 1 || page > totalPages) return;
     setCurrentPage(page);
   };
+
+  // Handle Edit User
+  const handleEditClick = () => {
+    if (!user) return;
+    setEditEmail(user.email);
+    setEditFullName(user.fullName || "");
+    setEditRole(user.role);
+    setEditMessage("");
+    setEditError("");
+    setIsEditOpen(true);
+  };
+
+  const handleUpdateUser = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setEditMessage("");
+  setEditError("");
+  setEditSaving(true);
+
+  try {
+    const token = localStorage.getItem("auth_token");
+    if (!token) throw new Error("Unauthorized");
+
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${user?._id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          email: editEmail,
+          fullName: editfullName,
+          role: editRole,
+        }),
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || "Update failed");
+    }
+
+    // Update UI instantly
+    setUser((prev) =>
+      prev ? { ...prev, email: editEmail, fullName: editfullName, role: editRole } : prev
+    );
+
+    setEditMessage("User updated successfully");
+
+    setTimeout(() => {
+    setEditMessage("");
+    setIsEditOpen(false);
+  }, 1500);
+
+  } catch (err: any) {
+    setEditError(err.message || "Failed to update user");
+  } finally {
+    setEditSaving(false);
+  }
+};
 
   if (loading)
     return (
@@ -154,7 +225,9 @@ export default function UserDetailPage() {
         )}
 
         <div className="flex-1 flex flex-col gap-2 text-[#3c2825]">
-          <p className="text-2xl font-semibold">{user.email}</p>
+          <p className="text-2xl font-semibold">{user.fullName}
+          </p>
+          <p className="text-gray-600">{user.email}</p>
           <span
             className={`inline-block mt-1 px-4 py-1 rounded-full text-sm font-semibold w-max ${
               user.role === "admin"
@@ -176,12 +249,12 @@ export default function UserDetailPage() {
           </div>
 
           <div className="mt-6 flex flex-wrap gap-3">
-            <Link
-              href={`/admin/users/${user._id}/edit`}
+            <button
+              onClick={handleEditClick}
               className="px-5 py-2 bg-[#6B4F4B] text-[#FAF5EE] rounded-lg hover:bg-[#5b443f] transition"
             >
               Edit User
-            </Link>
+            </button>
             <Link
               href="/admin/users"
               className="px-5 py-2 bg-[#6B4F4B] text-[#FAF5EE] rounded-lg hover:bg-[#5b443f] transition"
@@ -271,6 +344,87 @@ export default function UserDetailPage() {
               </div>
             )}
           </div>
+          {isEditOpen  && (
+  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+    <div className="bg-[#FAF5EE] w-full max-w-md rounded-2xl shadow-2xl p-6 border">
+      <h2 className="text-xl font-bold text-[#4B2E2B] mb-4">
+        Edit User
+      </h2>
+
+      {editMessage && (
+        <p className="mb-3 text-sm text-green-600 font-medium">
+          {editMessage}
+        </p>
+      )}
+
+      {editError && (
+        <p className="mb-3 text-sm text-red-600">{editError}</p>
+      )}
+
+      <form onSubmit={handleUpdateUser} className="space-y-4">
+         <div>
+        <label className="block text-sm font-medium text-[#3c2825] mb-1">
+          Full Name
+        </label>
+        <input
+          type="text"
+          value={editfullName}
+          onChange={(e) => setEditFullName(e.target.value)}
+          className="w-full rounded-md border px-3 py-2 text-sm outline-none focus:border-[#6B4F4B]"
+          placeholder="Enter full name"
+        />
+      </div>
+
+        <div>
+          <label className="block text-sm font-medium text-[#3c2825] mb-1">
+            Email
+          </label>
+          <input
+            type="email"
+            value={editEmail}
+            onChange={(e) => setEditEmail(e.target.value)}
+            required
+            className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#6B4F4B]/30"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-[#3c2825] mb-1">
+            Role
+          </label>
+          <select
+            value={editRole}
+            onChange={(e) =>
+              setEditRole(e.target.value as "user" | "admin")
+            }
+            className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#6B4F4B]/30"
+          >
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+
+        <div className="flex justify-end gap-3 pt-2">
+          <button
+            type="button"
+            onClick={() => setIsEditOpen(true)}
+            className="px-4 py-2 rounded-lg border text-[#4B2E2B] hover:bg-[#f3ece4]"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            disabled={editSaving}
+            className="px-4 py-2 bg-[#6B4F4B] text-[#FAF5EE] rounded-lg hover:opacity-90 disabled:opacity-50"
+          >
+            {editSaving ? "Saving..." : "Save Changes"}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
       </div>
   );
 }

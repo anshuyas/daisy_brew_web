@@ -1,19 +1,4 @@
-"use client";
-
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { getAuthToken } from "@/lib/cookie";
-
 export default function HomePage() {
-   const router = useRouter();
-
-  useEffect(() => {
-    const token = getAuthToken();
-    if (token) {
-      router.replace("/dashboard");
-    }
-  }, [router]);
-
   return (
     <main
       className="relative min-h-screen bg-cover bg-center"
