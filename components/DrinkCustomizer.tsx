@@ -73,7 +73,7 @@ export default function DrinkCustomizer({ drink, onClose, onAddToCart }: DrinkCu
   Coffee: "bg-[#4B2E2B]",      
   Matcha: "bg-[#1A461E]",   
   Smoothies: "bg-orange-300",
-  "Bubble Tea": "bg-purple-400",
+  "Bubble Tea": "bg-pink-300",
   Tea: "bg-amber-300",
 };
 const themeColor = themeColorMap[drink.category] || "bg-gray-600";

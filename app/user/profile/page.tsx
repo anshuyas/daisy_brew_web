@@ -84,76 +84,111 @@ export default function UserProfileSection() {
   };
 
   return (
-<div className="min-h-screen flex bg-[#F2D9B3] dark:bg-[#1E1412] dark:text-white p-10">    
-<div className="w-85 bg-white dark:bg-gray-900 rounded-3xl shadow-xl p-8 transition-colors duration-300">       
-        <label htmlFor="profileImage" className="cursor-pointer relative group">
-          {preview ? (
-            <img
-              src={preview}
-              alt="Profile Preview"
-              className="w-28 h-28 rounded-full object-cover border-4 border-[#4B2E2B] shadow-lg mb-2 transition-transform transform hover:scale-105"
-            />
-          ) : (
-            <div className="w-28 h-28 rounded-full bg-[#D9C9B3] flex items-center justify-center text-[#6B4F4B] text-lg font-medium border-4 border-[#3c2825] mb-2">
-              +
-            </div>
-          )}
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-black/25 rounded-full text-white font-medium">
-            Change
-          </div>
-        </label>
-        <input
-          id="profileImage"
-          type="file"
-          accept="image/*"
-          onChange={(e) => setImage(e.target.files ? e.target.files[0] : null)}
-          className="hidden"
+<div className="flex min-h-screen bg-[#F2D9B3] dark:bg-[#1E1412] dark:text-white">
+
+  {/* App Sidebar */}
+  <aside className="w-24 bg-[#F7D196] flex flex-col items-center py-8 space-y-20">
+    <div className="w-12 h-12 bg-[#DCCDB3] rounded-full flex items-center justify-center">
+      <img src="/images/logo.png" alt="Logo" className="w-12 h-12" />
+    </div>
+
+    <Link href="/dashboard" className="text-2xl hover:scale-110 transition">
+      🏠
+    </Link>
+
+    <Link href="/user/orders" className="text-2xl hover:scale-110 transition">
+      📋
+    </Link>
+
+    <Link href="/user/notification" className="text-2xl hover:scale-110 transition">
+      🔔
+    </Link>
+
+    <Link href="/user/profile" className="text-2xl hover:scale-110 transition">
+      👤
+    </Link>
+  </aside>
+
+  {/* Profile Section Wrapper */}
+  <div className="flex flex-1 p-10 gap-10">
+    <div className="w-80 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-white/40 dark:border-gray-700 rounded-3xl shadow-2xl p-8 transition-all duration-300 hover:shadow-[0_10px_40px_rgba(0,0,0,0.15)]">
+  
+  {/* Profile Image Section */}
+  <div className="flex flex-col items-center mb-6">
+    <label htmlFor="profileImage" className="cursor-pointer relative group">
+      {preview ? (
+        <img
+          src={preview}
+          alt="Profile Preview"
+          className="w-32 h-32 rounded-full object-cover border-4 border-[#4B2E2B] shadow-lg transition-transform duration-300 group-hover:scale-105"
         />
-
-        {/* Fullname & Email */}
-        <h2 className="text-xl font-bold text-[#3c2825] dark:text-white">{fullName}</h2>
-        <p className="text-gray-500 dark:text-gray-400">{email}</p>
-
-        {/* Menu */}
-        <div className="w-full mt-6 space-y-2">
-          <button
-            onClick={() => setActiveTab("profile")}
-            className={`w-full text-left px-4 py-2 rounded-lg font-medium transition ${
-              activeTab === "profile"
-                ? "bg-[#4B2E2B] text-white"
-                : "text-gray-700 hover:bg-gray-100"
-            }`}
-          >
-            My Profile
-          </button>
-          <button
-            onClick={() => setActiveTab("settings")}
-            className={`w-full text-left px-4 py-2 rounded-lg font-medium transition ${
-              activeTab === "settings"
-                ? "bg-[#4B2E2B] text-white"
-                : "text-gray-700 hover:bg-gray-100"
-            }`}
-          >
-            Settings
-          </button>
-          <button
-            onClick={() => setActiveTab("notifications")}
-            className={`w-full text-left px-4 py-2 rounded-lg font-medium transition ${
-              activeTab === "notifications"
-                ? "bg-[#4B2E2B] text-white"
-                : "text-gray-700 hover:bg-gray-100"
-            }`}
-          >
-            Notifications
-          </button>
-          <button
-            onClick={handleLogout}
-            className="w-full text-left px-4 py-2 rounded-lg font-medium text-red-600 hover:bg-red-50 transition"
-          >
-            Log Out
-          </button>
+      ) : (
+        <div className="w-32 h-32 rounded-full bg-gradient-to-br from-[#D9C9B3] to-[#F2D9B3] flex items-center justify-center text-[#6B4F4B] text-2xl font-bold border-4 border-[#3c2825] shadow-md">
+          +
         </div>
+      )}
+
+      {/* Overlay */}
+      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-black/30 rounded-full text-white text-sm font-semibold">
+        Change Photo
       </div>
+    </label>
+
+    <input
+      id="profileImage"
+      type="file"
+      accept="image/*"
+      onChange={(e) =>
+        setImage(e.target.files ? e.target.files[0] : null)
+      }
+      className="hidden"
+    />
+
+    {/* Name & Email */}
+    <h2 className="mt-4 text-xl font-bold text-[#3c2825] dark:text-white text-center">
+      {fullName}
+    </h2>
+    <p className="text-gray-500 dark:text-gray-400 text-sm text-center">
+      {email}
+    </p>
+  </div>
+
+  {/* Divider */}
+  <div className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent dark:via-gray-700 mb-6"></div>
+
+  {/* Menu */}
+  <div className="space-y-3">
+    <button
+      onClick={() => setActiveTab("profile")}
+      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${
+        activeTab === "profile"
+          ? "bg-[#4B2E2B] text-white shadow-md scale-[1.02]"
+          : "text-gray-700 dark:text-gray-300 hover:bg-[#F2E4D5] dark:hover:bg-gray-800 hover:scale-[1.01]"
+      }`}
+    >
+      👤 <span>My Profile</span>
+    </button>
+
+    <button
+      onClick={() => setActiveTab("settings")}
+      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${
+        activeTab === "settings"
+          ? "bg-[#4B2E2B] text-white shadow-md scale-[1.02]"
+          : "text-gray-700 dark:text-gray-300 hover:bg-[#F2E4D5] dark:hover:bg-gray-800 hover:scale-[1.01]"
+      }`}
+    >
+      ⚙️ <span>Settings</span>
+    </button>
+
+    {/* Logout */}
+    <button
+      onClick={handleLogout}
+      className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-300"
+    >
+      🚪 <span>Log Out</span>
+    </button>
+  </div>
+</div>
 
       {/* Content */}
 <div className="flex-1 ml-12 bg-white dark:bg-gray-900 rounded-3xl shadow-xl p-10 transition-colors duration-300">        {activeTab === "profile" && (
@@ -256,42 +291,10 @@ export default function UserProfileSection() {
                 {theme === "light" ? "Dark Mode" : "Light Mode"}
               </button>
             </div>
-
-            <div className="flex items-center justify-between">
-              <span className="text-gray-700 dark:text-gray-200">Language</span>
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                className="rounded-md border px-3 py-1 text-sm outline-none dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
-              >
-                <option value="en">English</option>
-                <option value="np">Nepali</option>
-              </select>
-            </div>
-          </div>
-        )}
-
-        {activeTab === "notifications" && (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-[#3c2825]">Notifications</h2>
-            <div className="mt-4 flex items-center gap-4">
-              <span className="text-gray-600 font-medium">Enable Notifications:</span>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="sr-only peer"
-                  checked={notifications}
-                  onChange={() => setNotifications(!notifications)}
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#4B2E2B] rounded-full peer peer-checked:bg-[#4B2E2B] transition-all"></div>
-                <span className="ml-3 text-sm font-medium text-gray-700">
-                  {notifications ? "Allow" : "Mute"}
-                </span>
-              </label>
-            </div>
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 }
