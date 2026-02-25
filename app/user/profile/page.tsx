@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { getUserData, setUserData, UserData } from "@/lib/cookie";
 import { useTheme } from "@/components/ThemeProvider";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { clearAuthCookies } from "@/lib/cookie";
 
 type Tab = "profile" | "settings" | "notifications";
 
@@ -20,14 +22,13 @@ export default function UserProfileSection() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const { theme, toggleTheme, setTheme } = useTheme();
-  const [language, setLanguage] = useState("English");
-  const [notifications, setNotifications] = useState(true);
 
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const router = useRouter();
 
   // Load user data on mount
   useEffect(() => {
@@ -79,8 +80,21 @@ export default function UserProfileSection() {
   };
 
   const handleLogout = () => {
-    localStorage.clear();
-    window.location.href = "/login";
+     localStorage.removeItem("userData");
+  localStorage.removeItem("token");
+  localStorage.removeItem("auth_token");
+
+  // Clear sessionStorage just in case
+  sessionStorage.clear();
+
+  // Clear cookies 
+  document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+  document.cookie = "userData=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+  document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+
+  // Force redirect to login
+  router.replace("/login");
+
   };
 
   return (

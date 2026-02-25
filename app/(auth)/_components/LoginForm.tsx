@@ -30,9 +30,9 @@ export default function LoginForm() {
         setUserData(result.user);
 
         if (result.user.role === "admin") {
-          router.push("/admin/dashboard");
+          router.replace("/admin/dashboard");
         } else {
-          router.push("/dashboard");
+          router.replace("/dashboard");
         }
       } else {
         setError(result.message || "Login failed");

@@ -11,7 +11,6 @@ import { MenuItem } from "@/types/menu";
 
 const categories = ["Coffee", "Matcha", "Smoothies", "Bubble Tea", "Tea"];
 
-// CartItem type
 interface CartItem {
   name: string;
   price: number;
@@ -92,6 +91,7 @@ export default function DashboardPage() {
   const [showCart, setShowCart] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [fetchedMenu, setFetchedMenu] = useState<MenuItem[]>([]);
+  const [loading, setLoading] = useState(true); // auth + menu loading
 
   const { cart, addToCart, removeFromCart, updateQuantity } = useCart();
   const router = useRouter();
@@ -99,9 +99,71 @@ export default function DashboardPage() {
   const toggleCart = () => setShowCart(prev => !prev);
   const allMenuItems = [...hardcodedMenu, ...fetchedMenu];
 
-  // Only show available drinks
-const availableMenuItems = allMenuItems.filter(item => item.isAvailable !== false);
+  //  Auth Guard 
+  useEffect(() => {
+    const token = getAuthToken();
+    if (!token) {
+      router.replace("/login");
+      return;
+    }
 
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get("http://localhost:5050/api/user/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUser(response.data.user);
+      } catch {
+        router.replace("/login");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [router]);
+
+  // Prevent Back Button from Navigating to Login
+useEffect(() => {
+  window.history.pushState(null, "", window.location.href);
+
+  const handlePopState = () => {
+    window.history.pushState(null, "", window.location.href);
+  };
+
+  window.addEventListener("popstate", handlePopState);
+
+  return () => window.removeEventListener("popstate", handlePopState);
+}, []);
+
+  // Menu Fetch 
+  useEffect(() => {
+    const fetchMenu = async () => {
+      try {
+        const res = await axios.get("http://localhost:5050/api/menu");
+        const backendMenu: MenuItem[] = res.data.data.map((item: any) => ({
+          _id: item._id,
+          name: item.name,
+          price: item.price,
+          image: `http://localhost:5050${item.image}`,
+          category: item.category,
+          isAvailable: item.isAvailable ?? true,
+        }));
+        setFetchedMenu(backendMenu);
+      } catch (err) {
+        console.error("Failed to fetch menu:", err);
+      }
+    };
+    fetchMenu();
+  }, []);
+
+  const filteredMenuItems = allMenuItems.filter(item =>
+    (item.isAvailable ?? true) &&
+    item.category === activeCategory &&
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  //  Cart Handlers 
   const handleAddToCart = (drink: MenuItem, options?: Partial<CartItem>, closeAfterMs = 2000) => {
     const cartItem: CartItem = {
       name: drink.name,
@@ -114,81 +176,50 @@ const availableMenuItems = allMenuItems.filter(item => item.isAvailable !== fals
       milk: options?.milk || "None",
     };
     addToCart(cartItem);
-    
-    if (closeAfterMs) {
-    setTimeout(() => setCustomizingDrink(null), closeAfterMs);
-  }
+    if (closeAfterMs) setTimeout(() => setCustomizingDrink(null), closeAfterMs);
   };
 
-  // Fetch user info
-  useEffect(() => {
-    const fetchUser = async () => {
-      const token = getAuthToken();
-      if (!token) return;
-
-      try {
-        const response = await axios.get("http://localhost:5050/api/user/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUser(response.data.user);
-      } catch (err) {
-        console.error("Failed to fetch user:", err);
-      }
-    };
-    fetchUser();
-  }, []);
-
-  // Fetch menu from backend and merge with hardcoded
-  useEffect(() => {
-  const fetchMenu = async () => {
-    try {
-      const res = await axios.get("http://localhost:5050/api/menu"); 
-      const backendMenu: MenuItem[] = res.data.data.map((item: any) => ({
-        _id: item._id,
-        name: item.name,
-        price: item.price,
-        image: `http://localhost:5050${item.image}`, 
-        category: item.category,
-        isAvailable: item.isAvailable ?? true,
-      }));
-      setFetchedMenu(backendMenu);
-    } catch (err) {
-      console.error("Failed to fetch menu:", err);
-    }
+  //  Logout 
+  const handleLogout = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+    document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+    document.cookie = "userData=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+    router.replace("/login");
+    window.location.reload();
   };
 
-  fetchMenu();
-}, []);
-
-  // Filter menu items by category and search term
- const filteredMenuItems = allMenuItems.filter(item => 
-  (item.isAvailable ?? true) &&
-  item.category === activeCategory &&
-  item.name.toLowerCase().includes(searchTerm.toLowerCase())
-);
-
+  //  Render 
   return (
-    <div className="min-h-screen flex bg-[#8A7356]">
-      {/* Sidebar */}
-      <aside className="w-25 bg-[#F7D196] flex flex-col items-center py-8 space-y-20">
-        <div className="w-12 h-12 bg-[#DCCDB3] rounded-full flex items-center justify-center">
-          <img src="/images/logo.png" alt="Logo" className="w-12 h-12" />
+    <>
+      {loading ? (
+        <div className="min-h-screen flex items-center justify-center text-white text-xl">
+          Loading...
         </div>
-        <Link href="/dashboard" className="text-2xl">🏠</Link>
-        <Link href="/user/orders" className="text-2xl">📋</Link>
-        <Link href="/user/notification" className="text-2xl">🔔</Link>
-        <Link href="/user/profile" className="text-2xl">👤</Link>
-      </aside>
+      ) : (
+        <div className="min-h-screen flex bg-[#8A7356]">
+          {/* Sidebar */}
+          <aside className="w-25 bg-[#F7D196] flex flex-col items-center py-8 space-y-20">
+            <div className="w-12 h-12 bg-[#DCCDB3] rounded-full flex items-center justify-center">
+              <img src="/images/logo.png" alt="Logo" className="w-12 h-12" />
+            </div>
+            <Link href="/dashboard" className="text-2xl">🏠</Link>
+            <Link href="/user/orders" className="text-2xl">📋</Link>
+            <Link href="/user/notification" className="text-2xl">🔔</Link>
+            <Link href="/user/profile" className="text-2xl">👤</Link>
 
-      {/* Main Content */}
-      <main className="flex-1 p-6 bg-[#8B7356] text-white flex flex-col">
-        {/* Greeting and Cart Icon */}
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl md:text-2xl">
-            Good to see you, {user?.fullName || "Username"}!
-          </h2>
-          <button onClick={toggleCart} className="text-3xl">🛒</button>
-        </div>
+          </aside>
+
+          {/* Main Content */}
+          <main className="flex-1 p-6 bg-[#8B7356] text-white flex flex-col">
+            {/* Greeting and Cart Icon */}
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl md:text-2xl">
+                Good to see you, {user?.fullName || "Username"}!
+              </h2>
+              <button onClick={toggleCart} className="text-3xl">🛒</button>
+            </div>
 
         {/* Search Bar */}
         <div className="mb-8 flex justify-end-safe">
@@ -252,12 +283,12 @@ const availableMenuItems = allMenuItems.filter(item => item.isAvailable !== fals
 
       {/* Drink Customizer Modal */}
       {customizingDrink && (
-        <DrinkCustomizer
-          drink={customizingDrink}
-          onClose={() => setCustomizingDrink(null)}
-          onAddToCart={(drinkOptions) => handleAddToCart(customizingDrink, drinkOptions)}
-        />
-      )}
+              <DrinkCustomizer
+                drink={customizingDrink}
+                onClose={() => setCustomizingDrink(null)}
+                onAddToCart={(drinkOptions) => handleAddToCart(customizingDrink, drinkOptions)}
+              />
+            )}
 
       {/* Cart Modal */}
     {showCart && (
@@ -321,7 +352,9 @@ const availableMenuItems = allMenuItems.filter(item => item.isAvailable !== fals
     </div>
   </div>
 )}
-
-    </div>
+</div>
+      )
+    }
+    </>
   );
 }
