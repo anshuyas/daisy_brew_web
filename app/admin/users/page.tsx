@@ -23,6 +23,15 @@ export default function AdminUsersPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const limit = 10;
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [editEmail, setEditEmail] = useState("");
+  const [editFullName, setEditFullName] = useState("");
+  const [editRole, setEditRole] = useState<"user" | "admin">("user");
+  const [editSaving, setEditSaving] = useState(false);
+  const [editError, setEditError] = useState("");
+  const [editMessage, setEditMessage] = useState("");
+  const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
 
   // Fetch users with pagination
   const fetchUsers = async (page: number) => {
@@ -44,6 +53,28 @@ export default function AdminUsersPage() {
   useEffect(() => {
     fetchUsers(page);
   }, [page]);
+
+  const handleEditClick = async (userId: string) => {
+  try {
+    const token = localStorage.getItem("auth_token");
+    if (!token) throw new Error("Unauthorized");
+
+    const res = await api.get(`/admin/users/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = res.data;
+
+    setSelectedUser(data);
+    setEditEmail(data.email);
+    setEditFullName(data.fullName || "");
+    setEditRole(data.role);
+    setEditMessage("");
+    setEditError("");
+    setIsEditOpen(true);
+  } catch (err: any) {
+    alert(err.message || "Failed to load user");
+  }
+};
 
   // Delete user
   const handleDelete = async (userId: string) => {
@@ -143,14 +174,14 @@ export default function AdminUsersPage() {
                     >
                       View
                     </Link>
-                    <Link
-                      href={`/admin/users/${user._id}/edit`}
-                      className="px-2 py-1 bg-[#e0cda5] rounded"
+                    <button
+                      onClick={() => handleEditClick(user._id)}
+                      className="px-2 py-1 bg-[#e0cda5] rounded hover:bg-[#d9cba5] transition"
                     >
                       Edit
-                    </Link>
+                    </button>
                     <button
-                      onClick={() => handleDelete(user._id)}
+                      onClick={() => setDeleteUserId(user._id)}
                       className="px-2 py-1 bg-[#f8d7da] text-[#721c24] rounded"
                     >
                       Delete
@@ -193,6 +224,147 @@ export default function AdminUsersPage() {
           </button>
         </div>
       </div>
+
+      {isEditOpen && selectedUser && (
+  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+    <div className="bg-[#FAF5EE] w-full max-w-md rounded-2xl shadow-2xl p-6 border">
+      <h2 className="text-xl font-bold text-[#4B2E2B] mb-4">Edit User</h2>
+
+      {editMessage && (
+        <p className="mb-3 text-sm text-green-600 font-medium">{editMessage}</p>
+      )}
+      {editError && (
+        <p className="mb-3 text-sm text-red-600">{editError}</p>
+      )}
+
+      <form
+        onSubmit={async (e) => {
+          e.preventDefault();
+          setEditMessage("");
+          setEditError("");
+          setEditSaving(true);
+          try {
+            const token = localStorage.getItem("auth_token");
+            const res = await api.put(
+              `/admin/users/${selectedUser._id}`,
+              { email: editEmail, fullName: editFullName, role: editRole },
+              { headers: { Authorization: `Bearer ${token}` } }
+            );
+            setEditMessage("User updated successfully");
+            setUsers((prev) =>
+              prev.map((u) =>
+                u._id === selectedUser._id
+                  ? { ...u, email: editEmail, fullName: editFullName, role: editRole }
+                  : u
+              )
+            );
+            setTimeout(() => setIsEditOpen(false), 1500);
+          } catch (err: any) {
+            setEditError(err.message || "Failed to update user");
+          } finally {
+            setEditSaving(false);
+          }
+        }}
+        className="space-y-4"
+      >
+        <div>
+          <label className="block text-sm font-medium text-[#3c2825] mb-1">
+            Full Name
+          </label>
+          <input
+            type="text"
+            value={editFullName}
+            onChange={(e) => setEditFullName(e.target.value)}
+            className="w-full rounded-md border px-3 py-2 text-sm outline-none focus:border-[#6B4F4B]"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-[#3c2825] mb-1">
+            Email
+          </label>
+          <input
+            type="email"
+            value={editEmail}
+            onChange={(e) => setEditEmail(e.target.value)}
+            required
+            className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#6B4F4B]/30"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-[#3c2825] mb-1">
+            Role
+          </label>
+          <select
+            value={editRole}
+            onChange={(e) => setEditRole(e.target.value as "user" | "admin")}
+            className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#6B4F4B]/30"
+          >
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+
+        <div className="flex justify-end gap-3 pt-2">
+          <button
+            type="button"
+            onClick={() => setIsEditOpen(false)}
+            className="px-4 py-2 rounded-lg border text-[#4B2E2B] hover:bg-[#f3ece4]"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            disabled={editSaving}
+            className="px-4 py-2 bg-[#6B4F4B] text-[#FAF5EE] rounded-lg hover:opacity-90 disabled:opacity-50"
+          >
+            {editSaving ? "Saving..." : "Save Changes"}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+
+{deleteUserId && (
+  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+    <div className="bg-[#FAF5EE] w-full max-w-sm rounded-2xl shadow-2xl p-6 border">
+      <h3 className="text-lg font-semibold text-[#4B2E2B] mb-4">
+        Confirm Delete
+      </h3>
+      <p className="mb-6 text-[#3c2825]">
+        Are you sure you want to delete this user? This action cannot be undone.
+      </p>
+
+      <div className="flex justify-end gap-3">
+        <button
+          onClick={() => setDeleteUserId(null)}
+          className="px-4 py-2 rounded-lg border text-[#4B2E2B] hover:bg-[#f3ece4]"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={async () => {
+            if (!deleteUserId) return;
+            try {
+              await api.delete(`/admin/users/${deleteUserId}`);
+              setUsers((prev) => prev.filter((u) => u._id !== deleteUserId));
+              setDeleteUserId(null);
+            } catch (err) {
+              alert("Failed to delete user");
+            }
+          }}
+          className="px-4 py-2 bg-[#f8d7da] text-[#721c24] rounded hover:bg-[#f1b0b7] transition"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 }
