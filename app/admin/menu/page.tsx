@@ -20,6 +20,8 @@ export default function AdminMenuPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
 
+  const [deleteItem, setDeleteItem] = useState<MenuItem | null>(null);
+
   const [form, setForm] = useState<{
     name: string;
     price: string;
@@ -173,7 +175,7 @@ export default function AdminMenuPage() {
 
         <button
           onClick={() => openModal()}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:opacity-90"
+          className="bg-[#533b38] text-white px-4 py-2 rounded hover:opacity-90"
         >
           + Add Menu Item
         </button>
@@ -206,17 +208,53 @@ export default function AdminMenuPage() {
               <div className="flex gap-2">
                 <button
                   onClick={() => openModal(item)}
-                  className="flex-1 bg-blue-600 text-white py-1 rounded"
+                  className="flex-1 bg-[#5b4541] text-white py-1 rounded"
                 >
                   Edit
                 </button>
                 <button
-                  onClick={() => handleDelete(item._id)}
-                  className="flex-1 bg-red-600 text-white py-1 rounded"
+                  onClick={() => setDeleteItem(item)}
+                  className="flex-1 bg-[#5b4541] text-white py-1 rounded"
                 >
                   Delete
                 </button>
               </div>
+
+              {deleteItem && (
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div className="bg-white rounded-2xl w-full max-w-sm p-6 relative">
+      <h2 className="text-xl font-bold mb-4">Confirm Delete</h2>
+      <p className="mb-6">
+        Are you sure you want to delete <strong>{deleteItem.name}</strong>?
+      </p>
+      <div className="flex justify-end gap-3">
+        <button
+          onClick={() => setDeleteItem(null)}
+          className="px-4 py-2 border rounded hover:bg-gray-100"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={async () => {
+            try {
+              await api.delete(`/admin/menu/${deleteItem._id}`);
+              setMenuItems((prev) =>
+                prev.filter((item) => item._id !== deleteItem._id)
+              );
+              setDeleteItem(null);
+            } catch (err) {
+              console.error("Delete failed", err);
+              alert("Failed to delete menu item");
+            }
+          }}
+          className="px-4 py-2 bg-red-600 text-white rounded hover:opacity-90"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+)}
             </div>
           );
         })}
