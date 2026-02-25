@@ -3,6 +3,18 @@
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import {
+  LayoutDashboard,
+  Users,
+  UtensilsCrossed,
+  Bell,
+  ShoppingCart,
+  BarChart3,
+  Settings,
+  LogOut,
+  Menu,
+  X,
+} from "lucide-react";
 import AdminPageWrapper from "./AdminPageWrapper";
 
 export default function AdminLayout({
@@ -15,11 +27,11 @@ export default function AdminLayout({
   const router = useRouter();
 
   const linkClasses = (path: string) =>
-    `px-3 py-2 rounded-md font-semibold transition ${
-      pathname === path
-        ? "bg-[#3c2825] text-white"
-        : "hover:bg-[#bfa77f] hover:text-white"
-    }`;
+  `flex items-center gap-4 px-3 py-2 rounded-md font-semibold transition ${
+    pathname === path
+      ? "bg-[#3c2825] text-white"
+      : "hover:bg-[#bfa77f] hover:text-white"
+  }`;
 
   const handleLogout = () => {
     localStorage.removeItem("auth_token");
@@ -39,32 +51,34 @@ export default function AdminLayout({
         <div>
           <h2 className="text-2xl font-bold mb-8">Admin Panel</h2>
 
-          <nav className="flex flex-col gap-3">
+          <nav className="flex flex-col gap-5">
             <Link href="/admin/dashboard" className={linkClasses("/admin/dashboard")}>
+            <LayoutDashboard size={18} />
               Dashboard
             </Link>
 
             <Link href="/admin/users" className={linkClasses("/admin/users")}>
+              <Users size={18} />
               Manage Users
             </Link>
 
             <Link href="/admin/menu" className={linkClasses("/admin/menu")}>
+              <UtensilsCrossed size={18} />
               Manage Menu
             </Link>
 
             <Link href="/admin/notifications" className={linkClasses("/admin/notifications")}>
+              <Bell size={18} />
                 Notifications
             </Link>
 
             <Link href="/admin/orders" className={linkClasses("/admin/orders")}>
+            <ShoppingCart size={18} />
                Orders
             </Link>
 
-            <Link href="/admin/reports" className={linkClasses("/admin/reports")}>
-               Reports
-            </Link>
-
             <Link href="/admin/settings" className={linkClasses("/admin/settings")}>
+            <Settings size={18} />
               Settings
             </Link>
           </nav>
@@ -73,11 +87,12 @@ export default function AdminLayout({
         {/* Logout Button */}
         <div className="mt-auto">
           <button
-            onClick={handleLogout}
-            className="px-3 py-2 rounded-md bg-[#3c2825] text-white w-full hover:opacity-90 transition"
-          >
-            Logout
-          </button>
+          onClick={handleLogout}
+          className="flex items-center gap-3 px-3 py-2 rounded-md bg-[#3c2825] text-white w-full hover:opacity-90 transition"
+        >
+          <LogOut size={18} />
+          Logout
+        </button>
         </div>
       </aside>
 
