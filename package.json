@@ -13,6 +13,7 @@
     "axios": "^1.13.2",
     "dayjs": "^1.11.19",
     "express": "^5.2.1",
+    "framer-motion": "^12.34.3",
     "js-cookie": "^3.0.5",
     "lottie-react": "^2.4.1",
     "lucide-react": "^0.575.0",
