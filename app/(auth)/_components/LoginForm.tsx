@@ -8,11 +8,15 @@ import { useState, useTransition } from "react";
 import { loginSchema, LoginData } from "../schema";
 import { loginAction } from "@/lib/actions/auth-action";
 import { setAuthToken, setUserData } from "@/lib/cookie";
+import { Eye, EyeOff } from "lucide-react";
+import ForgotPasswordForm from "./ForgotPasswordForm";
 
 export default function LoginForm() {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginData>({
     resolver: zodResolver(loginSchema),
@@ -41,6 +45,7 @@ export default function LoginForm() {
   };
 
   return (
+    <>
     <form onSubmit={handleSubmit(submit)} className="space-y-4 bg-[#c2b5a4] p-6 rounded-xl shadow-md w-full max-w-md">
       
       {error && <p className="text-xs text-red-600">{error}</p>} {/* backend errors */}
@@ -57,21 +62,34 @@ export default function LoginForm() {
       </div>
 
       <div className="space-y-1">
-        <label className="text-sm font-medium" htmlFor="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          className="h-10 w-full rounded-md border px-3 text-sm outline-none focus:border-[#6B4F4B]"
-          {...register("password")}
-        />
-        {errors.password && <p className="text-xs text-red-600">{errors.password.message}</p>}
-      </div>
+  <label className="text-sm font-medium" htmlFor="password">Password</label>
+  <div className="relative">
+    <input
+      id="password"
+      type={showPassword ? "text" : "password"}
+      className="h-10 w-full rounded-md border px-3 text-sm outline-none focus:border-[#6B4F4B] pr-10"
+      {...register("password")}
+    />
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+    >
+      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+    </button>
+  </div>
+  {errors.password && <p className="text-xs text-red-600">{errors.password.message}</p>}
+</div>
 
       <div className="text-right mt-1">
-        <Link href="/forgot-password" className="text-xs text-[#6B4F4B] hover:underline">
-          Forgot password?
-        </Link>
-      </div>
+          <button
+            type="button"
+            onClick={() => setIsForgotPasswordOpen(true)}
+            className="text-xs text-[#6B4F4B] hover:underline"
+          >
+            Forgot password?
+          </button>
+        </div>
 
       <button
         type="submit"
@@ -85,5 +103,21 @@ export default function LoginForm() {
         Don't have an account? <Link href="/register" className="font-semibold underline">Sign Up</Link>
       </div>
     </form>
+
+    {isForgotPasswordOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+          <div className="bg-[#FAF5EE] p-6 rounded-2xl shadow-lg w-full max-w-md relative">
+            <button
+              onClick={() => setIsForgotPasswordOpen(false)}
+              className="absolute top-3 right-3 text-gray-600 hover:text-gray-800 font-bold text-lg"
+            >
+              ×
+            </button>
+            <ForgotPasswordForm />
+          </div>
+        </div>
+      )}
+    </>
   );
 }
+
