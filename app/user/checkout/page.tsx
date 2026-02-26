@@ -36,9 +36,10 @@ export default function CheckoutPage() {
 
   const [user, setUser] = useState<UserData>({});
   const [deliveryOption, setDeliveryOption] = useState<"pickup" | "delivery">("delivery");
+  const [addressError, setAddressError] = useState("");
   const [timeOption, setTimeOption] = useState<"asap" | "later">("asap");
   const [scheduledTime, setScheduledTime] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("cod");
+  const [paymentMethod] = useState<"cod">("cod");
   const [isClient, setIsClient] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -93,6 +94,14 @@ export default function CheckoutPage() {
       toast.error("Your cart is empty");
       return;
     }
+
+     if (deliveryOption === "delivery" && !user.address?.trim()) {
+      setAddressError("Delivery address is required.");
+      toast.error("Please enter delivery address");
+      return;
+    }
+
+    setAddressError("");
 
     setIsSubmitting(true);
 
@@ -165,7 +174,25 @@ setAnimationFinished(false);
             <input type="text" placeholder="Full Name" value={user.fullName || ""} onChange={e => setUser(prev => ({ ...prev, fullName: e.target.value }))} className="w-full p-3 rounded-xl border focus:ring-2 focus:ring-[#8A7356] outline-none" />
             <input type="email" placeholder="Email" value={user.email || ""} onChange={e => setUser(prev => ({ ...prev, email: e.target.value }))} className="w-full p-3 rounded-xl border focus:ring-2 focus:ring-[#8A7356] outline-none" />
             <input type="text" placeholder="Phone Number" value={user.phone || ""} onChange={e => setUser(prev => ({ ...prev, phone: e.target.value }))} className="w-full p-3 rounded-xl border focus:ring-2 focus:ring-[#8A7356] outline-none" />
-            {deliveryOption === "delivery" && <input type="text" placeholder="Delivery Address" value={user.address || ""} onChange={e => setUser(prev => ({ ...prev, address: e.target.value }))} className="w-full p-3 rounded-xl border focus:ring-2 focus:ring-[#8A7356] outline-none" />}
+            {deliveryOption === "delivery" && (
+              <div>
+                <input
+                  type="text"
+                  placeholder="Delivery Address"
+                  value={user.address || ""}
+                  onChange={e => {
+                    setUser(prev => ({ ...prev, address: e.target.value }));
+                    setAddressError("");
+                  }}
+                  className={`w-full p-3 rounded-xl border focus:ring-2 focus:ring-[#8A7356] outline-none ${
+                    addressError ? "border-red-500" : ""
+                  }`}
+                />
+                {addressError && (
+                  <p className="text-red-500 text-sm mt-1">{addressError}</p>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Order Options */}
@@ -196,15 +223,15 @@ setAnimationFinished(false);
               </div>
 
               <div>
-                <p className="text-gray-600 mb-1 font-medium">Payment</p>
-                <div className="flex space-x-2">
-                  {["cod", "online"].map(opt => (
-                    <button key={opt} onClick={() => setPaymentMethod(opt as "cod" | "online")} className={`px-3 py-1 rounded-full text-sm font-medium border transition ${paymentMethod === opt ? "bg-[#4B2E2B] text-white border-[#4B2E2B]" : "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100"}`}>
-                      {opt === "cod" ? "Cash on Delivery" : "Online"}
-                    </button>
-                  ))}
-                </div>
+              <p className="text-gray-600 mb-1 font-medium">Payment</p>
+              <div className="flex space-x-2">
+                <button
+                  className="px-3 py-1 rounded-full text-sm font-medium border bg-[#4B2E2B] text-white border-[#4B2E2B]"
+                >
+                  Cash on Delivery
+                </button>
               </div>
+            </div>
             </div>
           </div>
         </div>
