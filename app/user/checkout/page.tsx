@@ -269,7 +269,7 @@ setAnimationFinished(false);
         </div>
       </div>
       {showSuccess && (
-  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+  <div data-testid="order-success" className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
     <div className="bg-[#d6c3a3] rounded-3xl p-8 text-center shadow-2xl w-[90%] max-w-md">
 
       {/* Coffee Animation */}

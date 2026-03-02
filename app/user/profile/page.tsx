@@ -225,6 +225,7 @@ export default function UserProfileSection() {
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
+                    data-testid="fullNameInput"
                   className="w-full px-4 py-2 mt-1 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#4B2E2B] transition"
                 />
               </div>
@@ -234,6 +235,7 @@ export default function UserProfileSection() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                    data-testid="emailInput"
                   className="w-full px-4 py-2 mt-1 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#4B2E2B] transition"
                 />
               </div>
@@ -243,6 +245,7 @@ export default function UserProfileSection() {
                   type="text"
                   value={mobile}
                   onChange={(e) => setMobile(e.target.value)}
+                    data-testid="mobileInput"
                   className="w-full px-4 py-2 mt-1 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#4B2E2B] transition"
                 />
               </div>
@@ -252,6 +255,7 @@ export default function UserProfileSection() {
                   type="text"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
+                    data-testid="locationInput"
                   className="w-full px-4 py-2 mt-1 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#4B2E2B] transition"
                 />
               </div>

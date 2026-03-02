@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import Link from "next/link";
 import { getAuthToken } from "@/lib/cookie";
+import { useRouter } from "next/navigation";
 
 interface OrderItem {
   _id: string;
@@ -16,6 +17,15 @@ interface OrderItem {
 export default function OrdersPage() {
   const [orders, setOrders] = useState<OrderItem[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const router = useRouter();
+
+useEffect(() => {
+  const token = getAuthToken();
+  if (!token) {
+    router.replace("/login");
+  }
+}, [router]);
 
   useEffect(() => {
     const fetchOrders = async () => {

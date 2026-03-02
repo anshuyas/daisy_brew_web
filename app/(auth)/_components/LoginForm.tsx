@@ -72,6 +72,7 @@ export default function LoginForm() {
     />
     <button
       type="button"
+      aria-label="Toggle password visibility"
       onClick={() => setShowPassword(!showPassword)}
       className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
     >

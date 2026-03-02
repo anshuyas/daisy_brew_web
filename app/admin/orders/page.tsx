@@ -26,7 +26,7 @@ export default function AdminOrdersPage() {
   const fetchOrders = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5050/api/orders/admin",
+        "http://localhost:5050/api/admin/orders",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -46,7 +46,7 @@ export default function AdminOrdersPage() {
   const updateStatus = async (id: string, newStatus: string) => {
     try {
       await axios.put(
-        `http://localhost:5050/api/orders/${id}/status`,
+        `http://localhost:5050/api/admin/orders/${id}/status`,
         { status: newStatus },
         {
           headers: {

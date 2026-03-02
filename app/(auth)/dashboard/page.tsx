@@ -208,6 +208,13 @@ useEffect(() => {
             <Link href="/user/orders" className="text-2xl">📋</Link>
             <Link href="/user/notification" className="text-2xl">🔔</Link>
             <Link href="/user/profile" className="text-2xl">👤</Link>
+            <button
+              id="logout"
+              onClick={handleLogout}
+              className="text-2xl mt-4"
+            >
+              🚪 
+            </button>
 
           </aside>
 
@@ -292,7 +299,7 @@ useEffect(() => {
 
       {/* Cart Modal */}
     {showCart && (
-      <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+      <div data-testid="cart-modal" className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
         <div className="bg-[#FAF5EE] w-150 max:w-225 h-[85vh] p-8 rounded-2xl flex flex-col space-y-4 shadow-lg">
           
       {/* Header */}
@@ -302,15 +309,15 @@ useEffect(() => {
       </div>
 
       {/* Cart Items */}
-      <div className="flex flex-col space-y-4 max-h-125 overflow-y-auto">
+      <div data-testid="cart-items-container" className="flex flex-col space-y-4 max-h-125 overflow-y-auto">
         {cart.length === 0 ? (
-          <p className="text-gray-600">Your cart is empty</p>
+          <p data-testid="cart-empty-msg" className="text-gray-600">Your cart is empty</p>
         ) : (
           cart.map((item, index) => (
-            <div key={index} className="flex items-center bg-white rounded-xl shadow p-3 space-x-3">
+            <div key={index} data-testid={`cart-item-${index}`} className="flex items-center bg-white rounded-xl shadow p-3 space-x-3">
               <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg" />
               <div className="flex-1 flex flex-col">
-                <p className="font-semibold text-[#4B2E2B]">{item.name}</p>
+                <p data-testid={`cart-item-name-${index}`} className="font-semibold text-[#4B2E2B]">{item.name}</p>
                 <p className="text-gray-500 text-sm">{item.size}, {item.temperature}</p>
                 <p className="text-gray-500 text-sm">{item.sugar}, {item.milk}</p>
               </div>
@@ -318,18 +325,21 @@ useEffect(() => {
               <div className="flex items-center space-x-2">
                       <button
                         onClick={() => updateQuantity(index, item.quantity - 1)}
+                        data-testid={`cart-decrease-${index}`}
                         className="px-2 py-1 bg-gray-200 rounded-full hover:bg-gray-300"
                         disabled={item.quantity <= 1}
                       >-</button>
-                      <span className="w-5 text-center">{item.quantity}</span>
+                      <span data-testid={`cart-quantity-${index}`} className="w-5 text-center">{item.quantity}</span>
                       <button
                         onClick={() => updateQuantity(index, item.quantity + 1)}
+                        data-testid={`cart-increase-${index}`}
                         className="px-2 py-1 bg-gray-200 rounded-full hover:bg-gray-300"
                       >+</button>
                     </div>
 
                     <button
                       onClick={() => removeFromCart(index)}
+                      data-testid={`cart-remove-${index}`}
                       className="text-red-500 hover:text-red-700 text-xl ml-2"
                     >
                       🗑
