@@ -1,10 +1,28 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import LoginForm from "../_components/LoginForm";
 import Image from "next/image";
-import Link from "next/link";
+import { getUserData } from "@/lib/cookie";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  useEffect(() => {
+  const user = getUserData();
+  const token = localStorage.getItem("token"); 
+
+  if (user && token) {
+    router.replace("/dashboard");
+  } else {
+      setCheckingAuth(false); 
+    }
+}, [router]);
+
+ if (checkingAuth) return null;
+
   return (
     <div className="min-h-screen bg-[#c6b391] flex items-center justify-center px-6 relative">
 

@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { handleCreateUser } from "@/lib/actions/admin/user-action";
+import api from "@/lib/api/axios";
+import { CreateUserAction } from "./action";
 
 export default function CreateUserPage() {
   const router = useRouter();
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("user");
@@ -21,26 +23,31 @@ export default function CreateUserPage() {
 
     try {
       const formData = new FormData();
+      formData.append("fullName", fullName);
       formData.append("email", email);
       formData.append("password", password);
       formData.append("role", role);
       if (image) formData.append("image", image);
 
-      const result = await handleCreateUser(formData);
+   const token = localStorage.getItem("auth_token");
+       if (!token) throw new Error("You must be logged in as admin");
 
-      if (result.success) {
-        setMessage("User created successfully!");
-        router.push("/admin/users");
-      } else {
-        setMessage(result.message || "Failed to create user");
-      }
-    } catch (err: any) {
-      setMessage(err.message || "Unexpected error");
+    const res = await api.post("/admin/users", formData, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (res.data.success) {
+      setMessage("User created successfully");
+      router.push("/admin/users");
+    } else {
+      setMessage(res.data.message || "Failed to create user");
     }
+  } catch (err: any) {
+    setMessage(err.response?.data?.message || err.message || "Server error");
+  }
 
-    setLoading(false);
-  };
-
+  setLoading(false);
+};
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setImage(e.target.files[0]);
@@ -56,12 +63,21 @@ export default function CreateUserPage() {
         </h1>
 
         {message && (
-          <p className="mb-4 text-sm text-center text-green-600 font-medium">
-            {message}
-          </p>
+          <p className="mb-4 text-sm text-center text-green-600 font-medium">{message}</p>
         )}
 
         <form onSubmit={submitHandler} className="space-y-5">
+          {/* FullName */}
+          <div className="flex flex-col">
+          <label className="text-sm font-semibold text-[#4B2E2B] mb-1">Full Name</label>
+          <input
+            type="text"
+            value={fullName}
+            onChange={e => setFullName(e.target.value)}
+            className="px-4 py-2 rounded-lg border border-[#d4c5b1] focus:border-[#6B4F4B] outline-none shadow-sm transition"
+            required
+          />
+        </div>
 
           {/* Email */}
           <div className="flex flex-col">
@@ -104,7 +120,6 @@ export default function CreateUserPage() {
           <div className="flex flex-col">
             <label className="text-sm font-semibold text-[#4B2E2B] mb-2">Profile Image (optional)</label>
             <div className="flex items-center gap-4">
-              {/* Preview Avatar */}
               <div className="w-16 h-16 rounded-full bg-[#e0d5c8] overflow-hidden flex items-center justify-center border border-[#d4c5b1]">
                 {preview ? (
                   <img src={preview} alt="Preview" className="w-full h-full object-cover" />
@@ -112,7 +127,6 @@ export default function CreateUserPage() {
                   <span className="text-sm text-[#6B4F4B]">No Image</span>
                 )}
               </div>
-              {/* Upload Button */}
               <label className="cursor-pointer px-4 py-2 bg-[#3c2825] text-[#FAF5EE] rounded-lg hover:opacity-90 transition text-sm">
                 {image ? "Change Image" : "Upload Image"}
                 <input
@@ -125,7 +139,7 @@ export default function CreateUserPage() {
             </div>
           </div>
 
-          {/* Submit Button */}
+          {/* Submit */}
           <button
             type="submit"
             disabled={loading}

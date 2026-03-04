@@ -86,31 +86,29 @@ export default function ResetPasswordPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-[#3c2825]">
-              New Password
-            </label>
+          <label className="block text-sm font-medium text-[#3c2825]">
+            New Password
             <input
+            id="newPassword"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               className="w-full rounded-md border px-3 py-2 text-sm outline-none focus:border-[#6B4F4B]"
             />
-          </div>
+          </label>
 
-          <div>
-            <label className="block text-sm font-medium text-[#3c2825]">
-              Confirm Password
-            </label>
+          <label className="block text-sm font-medium text-[#3c2825]">
+            Confirm Password
             <input
+            id="confirmPassword"
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               className="w-full rounded-md border px-3 py-2 text-sm outline-none focus:border-[#6B4F4B]"
             />
-          </div>
+          </label>
 
           <button
             type="submit"

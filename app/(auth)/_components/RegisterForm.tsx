@@ -7,11 +7,14 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { registerSchema, RegisterData } from "../schema";
 import { registerAction } from "@/lib/actions/auth-action";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function RegisterForm() {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterData>({
     resolver: zodResolver(registerSchema),
@@ -41,11 +44,10 @@ export default function RegisterForm() {
         <input
           id="name"
           type="text"
-          placeholder="Keifer Watson"
           className="h-10 w-full rounded-md border px-3 text-sm outline-none focus:border-brown-700"
-          {...register("name")}
+          {...register("fullName")}
         />
-        {errors.name && <p className="text-xs text-red-600">{errors.name.message}</p>}
+        {errors.fullName && <p className="text-xs text-red-600">{errors.fullName.message}</p>}
       </div>
 
       <div className="space-y-1">
@@ -53,7 +55,6 @@ export default function RegisterForm() {
         <input
           id="email"
           type="email"
-          placeholder="keif@example.com"
           className="h-10 w-full rounded-md border px-3 text-sm outline-none focus:border-brown-700"
           {...register("email")}
         />
@@ -61,28 +62,43 @@ export default function RegisterForm() {
       </div>
 
       <div className="space-y-1">
-        <label htmlFor="password" className="text-sm font-medium">Password</label>
-        <input
-          id="password"
-          type="password"
-          placeholder="••••••"
-          className="h-10 w-full rounded-md border px-3 text-sm outline-none focus:border-brown-700"
-          {...register("password")}
-        />
-        {errors.password && <p className="text-xs text-red-600">{errors.password.message}</p>}
-      </div>
-
-      <div className="space-y-1">
-        <label htmlFor="confirmPassword" className="text-sm font-medium">Confirm Password</label>
-        <input
-          id="confirmPassword"
-          type="password"
-          placeholder="••••••"
-          className="h-10 w-full rounded-md border px-3 text-sm outline-none focus:border-brown-700"
-          {...register("confirmPassword")}
-        />
-        {errors.confirmPassword && <p className="text-xs text-red-600">{errors.confirmPassword.message}</p>}
-      </div>
+  <label htmlFor="password" className="text-sm font-medium">Password</label>
+  <div className="relative">
+    <input
+      id="password"
+      type={showPassword ? "text" : "password"}
+      className="h-10 w-full rounded-md border px-3 text-sm outline-none focus:border-brown-700 pr-10"
+      {...register("password")}
+    />
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 cursor-pointer transition-colors"
+    >
+      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+    </button>
+  </div>
+  {errors.password && <p className="text-xs text-red-600">{errors.password.message}</p>}
+</div>
+     <div className="space-y-1">
+  <label htmlFor="confirmPassword" className="text-sm font-medium">Confirm Password</label>
+  <div className="relative">
+    <input
+      id="confirmPassword"
+      type={showConfirmPassword ? "text" : "password"}
+      className="h-10 w-full rounded-md border px-3 text-sm outline-none focus:border-brown-700 pr-10"
+      {...register("confirmPassword")}
+    />
+    <button
+      type="button"
+      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 cursor-pointer transition-colors"
+    >
+      {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+    </button>
+  </div>
+  {errors.confirmPassword && <p className="text-xs text-red-600">{errors.confirmPassword.message}</p>}
+</div>
 
       <button
         type="submit"
